@@ -1,0 +1,20 @@
+﻿<Window x:Class="VitalConnection.AAL.Builder.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VitalConnection.AAL.Builder"
+        mc:Ignorable="d"
+        Title="О программе..." Height="223.078" Width="453.077" WindowStyle="ToolWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <StackPanel Margin="10">
+        <TextBlock Text="Программа-Компоновщик материалов газеты" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,15" />
+
+        <TextBlock Text="Автор Михаил Кескинов" FontSize="13" Margin="0,0,0,15" />
+        <TextBlock Text="Разработано специально для газеты &quot;Реклама и Жизнь&quot;" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,15" />
+        <TextBlock Name="tbVersion" Text="Версия науке неизвестная" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="13" />
+        <TextBlock Text="© Филадельфия, 2017" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="13" />
+
+        <Button Content="OK" Click="Button_Click" Width="50" HorizontalAlignment="Right" Margin="10" />
+
+    </StackPanel>
+</Window>

@@ -1,0 +1,41 @@
+﻿<Window x:Class="VitalConnection.AAL.Builder.NewIssueWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:VitalConnection.AAL.Builder"
+        mc:Ignorable="d"
+        Title="Новый выпуск газеты" Height="170" Width="260" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
+	<Grid Margin="5" >
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+			<ColumnDefinition Width="50" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition Height="20" />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+
+        <TextBlock Text="{Binding NewspaperName}" TextWrapping="Wrap" Grid.ColumnSpan="2" />
+
+        <Label Grid.Row="1" Content="Номер" />
+        <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" Text="{Binding Number, Mode=TwoWay}" />
+
+        <Label Grid.Row="2" Content="Год" />
+        <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" Text="{Binding Year, Mode=TwoWay}" />
+
+        <!--<Label Grid.Row="3" Content="Количество страниц" />
+        <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" Text="{Binding PageCount, Mode=TwoWay}" />-->
+
+
+        
+        <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Создать" Margin="0,0,10,0" Padding="10,0" Command="{Binding CreateIssueCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+            <Button Content="Отмена" Padding="10,0"  Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
+		</StackPanel>
+	</Grid>
+</Window>

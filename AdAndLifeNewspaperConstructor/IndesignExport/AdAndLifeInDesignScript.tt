@@ -1,0 +1,231 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+Set myInDesign = CreateObject("InDesign.Application")
+Set myDocument = myInDesign.Open("<#= TemplateLocation #>")
+myDocument.Layers(1).Visible = myDocument.Layers(1).Visible
+   
+If myDocument.Pages.Count < <#= PageCount #> Then
+   For p = 1 To <#= PageCount #> - myDocument.Pages.Count
+	   Set newPage = myDocument.Pages.Add(idBefore, myDocument.Pages.LastItem)
+	   newPage.AppliedMaster = myDocument.MasterSpreads("M-Main")
+   Next 
+End If
+
+myDocument.Layers.Item("modulesLayer").Delete
+Set modulesLayer = myDocument.Layers.Add
+modulesLayer.Name = "modulesLayer"
+
+' ====== PLACE ADS ======
+
+    <# 
+	var pageNum = 0;
+	double classifiedColumnWidth = 0;
+	foreach (var p in Issue.Pages)
+       { 
+		   pageNum++;
+#>
+
+	Set myPage = myDocument.Pages.Item(<#= pageNum #>)
+
+<#
+		   var pg = new PageGridGeometry(p);
+
+           foreach (var ad in p.AdModules)
+           {
+			   var ph = Utility.ConvertFilePath(ad.AdModule.FullPath);
+			   if (ph == null) continue;
+			   if (!System.IO.File.Exists(ph)) continue;
+
+			   var y0 = pg.GetY(ad.Y);
+			   var x0 = pg.GetX(ad.X);
+			   var y1 = y0 + pg.GetHeight(ad.AdModule.Height);
+			   var x1 = x0 + pg.GetWidth(ad.AdModule.Width);
+			   var gap = pg.Gap;
+		   #>
+		 
+	Set myRectangle = myPage.Rectangles.Add
+	myRectangle.GeometricBounds = Array(<#=y0#>, <#=x0#>, <#=y1#>, <#=x1#>)
+	myRectangle.strokeWeight = 0
+	myRectangle.strokeColor = myDocument.Swatches.Item("None")
+    myRectangle.TextWrapPreferences.TextWrapMode = idBoundingBoxTextWrap
+    myRectangle.TextWrapPreferences.TextWrapOffset = Array(<#=gap#>, <#=gap#>, <#=gap#>, <#=gap#>)
+    myRectangle.ItemLayer =  myDocument.Layers.Item("modulesLayer")
+	myRectangle.place "<#=ph#>"
+	myRectangle.fit idFitOptions.idContentToFrame
+
+		 <#
+           }
+	   
+ }  #>
+
+
+' ====== PREPARE CLASSIFIED FLOW ======
+
+
+'Set classifiedLayer = myDocument.Layers.Item("classifiedLayer")
+myDocument.Layers.Item("classifiedLayer").Delete
+Set classifiedLayer = myDocument.Layers.Add
+classifiedLayer.Name = "classifiedLayer"
+
+
+<# 
+	var isFirst = true;
+	pageNum = 0;
+	foreach (var p in Issue.Pages)
+       { 
+		   pageNum++;
+		   if (!p.Grid.IsForClassified) continue;
+		   #>
+
+	Set myPage = myDocument.Pages.Item(<#= pageNum #>)
+
+<#
+
+  		   var cg = new PageClassifiedGeometry(p);
+
+		   classifiedColumnWidth = cg.FrameWidth; // use in filling classified
+
+           for (int i = 0; i < p.Grid.ColumnsCount; i++)
+           {
+
+			   var y0 = cg.FrameTop;
+			   var x0 = cg.GetFrameX(i);
+			   var y1 = y0 + cg.FrameHeight;
+			   var x1 = x0 + cg.FrameWidth;
+
+		   #>
+
+
+Set frm = myPage.TextFrames.Add
+With frm
+	.GeometricBounds = Array(<#=y0#>, <#=x0#>, <#=y1#>, <#=x1#>)
+	.strokeWeight = 0
+	.strokeColor = myDocument.Swatches.Item("None")
+	.ItemLayer = classifiedLayer
+	.TextFramePreferences.VerticalJustification = idJustifyAlign
+	<# if (!isFirst) { #>	
+	frm.PreviousTextFrame = frmPrev 
+	<# } #>
+	Set frmPrev = frm
+End With
+
+
+		   <#
+		   isFirst = false;
+           }
+
+#>
+
+
+<#
+    }
+#>
+
+   Set flowStory = frm.ParentStory
+   flowStory.Label = "flowStory"
+   flowStory.StoryPreferences.OpticalMarginAlignment = True
+
+' ====== FILL CLASSIFIED ======
+
+   Set strStyle = myDocument.StrokeStyles.ItemByID(23097)
+
+   With flowStory.InsertionPoints.LastItem
+      .ClearOverrides
+      .AppliedParagraphStyle = "__classifiedText"
+      .Contents = Chr(13) & Chr(13)
+   End With
+
+<#	
+	   int currRubricId = -1;
+	   bool toDrawLine = false;
+       foreach (var cl in Classified)
+       {
+		   #>
+
+	Set curParagraph = flowStory.Paragraphs(flowStory.Paragraphs.Count - 1)
+
+		   <#
+			var txt = GetClassifiedText(cl);
+			if (cl.Rubric.Id != currRubricId) {
+				// insert rubric picture
+				var rubImgFn = Utility.ConvertFilePath(cl.Rubric.ImageFilename);
+
+				#>
+
+	' NEW RUBRIC
+	curParagraph.place "<#= rubImgFn #>"
+	curParagraph.Contents = curParagraph.Contents & Chr(13) & Chr(13)
+    Set curParagraph = flowStory.Paragraphs(flowStory.Paragraphs.Count - 1)
+
+				<#
+				currRubricId = cl.Rubric.Id;
+            }
+
+			#>
+
+			<# if (!IsBorder(cl) && !IsFilled(cl)) { #>
+
+    With curParagraph
+		.ClearOverrides
+		.AppliedParagraphStyle = "<#= IsBold(cl) ? "__classifiedTextBold" : "__classifiedText" #>"
+		<#if (IsCentered(cl)) { #> 
+		.Justification = idJustification.idCenterAlign 
+		<# } #>
+		.Contents = "<#= txt #>" & Chr(13)
+    End With
+    <# toDrawLine = true; #>
+			<# } else { #>
+
+    Set tbl = curParagraph.Tables.Add(idAtEnd)
+    With tbl
+	    .ColumnCount = 1
+		.BodyRowCount = 1
+		Set cll = .Cells(1)
+    End With
+
+    With cll
+	    .ClearCellStyleOverrides
+	    .width = <#= classifiedColumnWidth #>
+		<# if (IsFilled(cl)) { #>
+        .AppliedCellStyle = "__classifiedFilledBox"
+        .InsertionPoints.LastItem.AppliedParagraphStyle = "__classifiedFilledBoxText"
+		<# } else if (IsBorder(cl)) { #>
+        .AppliedCellStyle = "__classifiedBox"
+        .InsertionPoints.LastItem.AppliedParagraphStyle = "<#= IsBold(cl) ? "__classifiedTextBold" : "__classifiedText" #>"
+		<# } else 
+			System.Diagnostics.Debugger.Break(); // should never happen
+		#>
+		<#if (IsCentered(cl)) { #>
+		.InsertionPoints.LastItem.Justification = idJustification.idCenterAlign 
+		<# } #>
+		.Contents = "<#= txt #>"
+    End With
+
+	<# } // if
+		#>
+
+    With flowStory.Paragraphs(flowStory.Paragraphs.Count - 1)
+        .Select
+        .SpaceAfter = 0.125
+        <# if (toDrawLine) { #>
+        .RuleBelowType = strStyle
+        .RuleBelowOffset = 0.0625
+        .RuleBelow = True
+        <# } #>
+    End With
+    <# toDrawLine = false; #>
+    flowStory.InsertionPoints.LastItem.Contents = Chr(13)
+
+<#
+       } // foreach
+
+#>
+
+  ' If Len(flowStory.Paragraphs.LastItem.Contents) = 1 Then flowStory.Paragraphs.LastItem.Delete
+  ' If Len(flowStory.Paragraphs.LastItem.Contents) = 1 Then flowStory.Paragraphs.LastItem.Delete
+  ' FormatTags flowStory
+ '  ClassifiedFitting flowStory

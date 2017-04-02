@@ -1,12 +1,242 @@
-﻿<Window x:Class="AdAndLifeNewspaperConstructor.MainWindow"
+﻿<Window x:Class="VitalConnection.AAL.Builder.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AdAndLifeNewspaperConstructor"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+        xmlns:local="clr-namespace:VitalConnection.AAL.Builder"
+        mc:Ignorable="d" 
+        Title="Реклама и Жизнь" Height="500" Width="700" Loaded="Window_Loaded" WindowState="Maximized">
+	<DockPanel>
+		<Menu DockPanel.Dock="Top">
+			<MenuItem Header="Команды">
+				<MenuItem Header="Новый выпуск газеты..." Command="{Binding NewIssueCommand}" />
+				<MenuItem Header="Новый рекламный блок..." Command="{Binding NewAdModuleCommand}" />
+				<!--<MenuItem Header="Проверить выпуск на ошибки" Command="{Binding ValidateIssueCommand}" />-->
+				<MenuItem Header="Экспорт в InDesign..." Command="{Binding BuildIssueCommand}" />
+				<Separator />
+				<MenuItem Header="О программе..." Command="{Binding AboutCommand}" />
+				<MenuItem Header="Выход" Click="ExitApp_Click" />
+			</MenuItem>
+		</Menu>
+		<StatusBar DockPanel.Dock="Bottom">
+			<StatusBarItem>
+				<TextBlock Name="tbStatusBarText" />
+			</StatusBarItem>
+		</StatusBar>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="25"/>
+				<RowDefinition/>
+			</Grid.RowDefinitions>
+
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<ComboBox ItemsSource="{Binding Databases}" SelectedValue="{Binding CurrentDatabase, Mode=Default, UpdateSourceTrigger=PropertyChanged}"   />
+				<ComboBox Grid.Column="1" ItemsSource="{Binding Issues}" SelectedValue="{Binding CurrentIssueId, Mode=Default, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Id"  />
+			</Grid>
+
+			<TabControl Grid.Row="2" x:Name="tabControl">
+				<TabItem Header="Страницы">
+					<Grid Background="#FFE5E5E5">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="50"/>
+							<RowDefinition />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<ScrollViewer Grid.Row="0" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Auto">
+							<StackPanel Orientation="Horizontal" x:Name="PageSelectionStackPanel">
+							</StackPanel>
+						</ScrollViewer>
+
+
+						<Grid Grid.Row="1">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition />
+								<RowDefinition Height="200" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <CheckBox Content="Рекламодатель" IsChecked="{Binding IsAdModuleAdvertizerFilterOn}" VerticalAlignment="Center" Margin="0,3,10,3" />
+                                <ComboBox Grid.Column="1" VerticalAlignment="Center" SelectedItem="{Binding AdModuleAdvertizerFilter, Mode=TwoWay}" ItemsSource="{Binding AllAdvertizers}"  />
+                                <CheckBox VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" IsChecked="{Binding IsAdModuleMustFitThePage}" Content="Подходящие для страницы" Margin="0,3,10,3" />
+                                <CheckBox Grid.Row="2" Content="Поиск" IsChecked="{Binding IsAdModuleTextFilterOn}" />
+                                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding FilterString, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+
+							<ListBox x:Name="AdModulesList" Grid.Row="1" SelectionChanged="AdModulesList_SelectionChanged" SelectionMode="Extended" ItemsSource="{Binding AdModuleView}" />
+
+                            <Grid Grid.Row="2" Visibility="{Binding AdModuleMultipleSelectionVisibility}">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding AdModulesMultipleSelectionInfo}" FontSize="18" />
+                                    <Button HorizontalAlignment="Center" Command="{Binding DeleteAdModulesCommand}" Content="Удалить" Margin="0,5" Padding="10" />
+                                </StackPanel>
+                            </Grid>
+                            
+							<Grid Grid.Row="2" Visibility="{Binding AdModuleInfoVisibility}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="150"/>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<Image HorizontalAlignment="Left" Source="{Binding AdModuleImage}" />
+								<StackPanel Visibility="{Binding VisibleIfAdModuleSelected}" Orientation="Vertical" Grid.Column="1" Margin="20,0,0,0">
+									<TextBlock Text="{Binding AdModuleName}" FontSize="20" />
+									<TextBlock Text="{Binding AdModuleSize}" />
+									<TextBlock Text="{Binding AdModuleAdvertiserName}" />
+									<TextBlock Text="{Binding AdModuleAdvertiserContactName}" />
+									<TextBlock Text="{Binding AdModuleAdvertiserPhone}" />
+									<TextBlock Text="{Binding AdModuleAdvertiserFax}" />
+									<TextBlock Text="{Binding AdModuleAdvertiserEmail}" />
+								</StackPanel>
+								<StackPanel Orientation="Vertical" Grid.Column="2" Margin="20,0,0,0">
+									<Button Visibility="{Binding AddToPageCommandVisibility}" HorizontalAlignment="Left" Command="{Binding AddToPageCommand}" Width="150" Content="Добавить на страницу" Height="30" Margin="0,5" />
+									<Button Visibility="{Binding DeleteCommandVisibility}" HorizontalAlignment="Left" Command="{Binding DeleteCommand}" Content="Убрать со страницы" Width="150" Height="30" Margin="0,5" />
+									<Button Visibility="{Binding VisibleIfAdModuleSelected}" HorizontalAlignment="Left" Command="{Binding EditAdModuleCommand}" Content="Редактировать" Margin="0,5" Width="150" Height="30" />
+                                    <Button Visibility="{Binding DeleteAdModuleCommandVisibility}" HorizontalAlignment="Left" Command="{Binding DeleteAdModuleCommand}" Content="Удалить" Width="150" Height="30" Margin="0,5" />
+                                </StackPanel>
+
+							</Grid>
+
+
+						</Grid>
+
+						<Grid x:Name="PageLayoutGrid" Grid.Column="1" Grid.Row="1" Background="#FFC3F5C8" >
+							<Grid.RowDefinitions>
+								<RowDefinition/>
+								<RowDefinition/>
+								<RowDefinition/>
+								<RowDefinition/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							<Border BorderBrush="#FFF50F0F" BorderThickness="3"  />
+						</Grid>
+						<Canvas x:Name="PageLayoutSelectionCanvas" Grid.Column="1" Grid.Row="1"></Canvas>
+
+					</Grid>
+				</TabItem>
+				<TabItem Header="Объявления">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="90"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<StackPanel>
+							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+								<TextBlock Text="Рубрика: " Width="60" />
+								<ComboBox Grid.Column="2" HorizontalAlignment="Left" SelectedItem="{Binding Path=ClassifiedFilterRubric, Mode=TwoWay}" ItemsSource="{Binding Path=AllRubrics}"  Height="20" Width="200" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+								<TextBlock Text="Поиск: " Width="60" />
+								<TextBox Width="200" HorizontalAlignment="Left" Text="{Binding ClassifiedFilterString, UpdateSourceTrigger=PropertyChanged}" />
+							</StackPanel>
+							<CheckBox IsChecked="{Binding IsClassifiedMustBeInThisIssue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Content="Публикуются в этом выпуске" />
+							<CheckBox IsChecked="{Binding IsClassifiedEndsNowFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Content="Заканчиваются в этом выпуске" />
+
+						</StackPanel>
+						<StackPanel HorizontalAlignment="Right" Margin="0,0,5,0">
+							<StackPanel Height="40" Orientation="Horizontal" HorizontalAlignment="Right">
+								<Button Command="{Binding DeleteClassifiedAdCommand}" Visibility="{Binding DeleteClassifiedAdVisibility}" Content="Удалить объявление" Padding="10,0" Margin="0,5,10,5" />
+								<Button Command="{Binding NewClassifiedAdCommand}" Content="Новое объявление" Padding="10,0" Margin="0,5,0,5" />
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+								<TextBlock FontSize="20" Text="Количество:" />
+								<TextBlock FontSize="20" Text="{Binding ClassifiedCount}" />
+							</StackPanel>
+						</StackPanel>
+
+						<DataGrid IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding ClassifiedView}" Name="ClassifiedGrid" SelectedItem="{Binding SelectedClassifiedAd}" AutoGenerateColumns="False" >
+
+							<DataGrid.InputBindings>
+								<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=OpenClassifiedAdCommand}" CommandParameter="{Binding ElementName=ClassifiedGrid, Path=SelectedItem}" />
+							</DataGrid.InputBindings>
+
+							<DataGrid.Columns>
+								<DataGridTextColumn Width="100" Header="Рекламодатель" Binding="{Binding Advertiser}" />
+								<DataGridTextColumn Width="150" Header="Рубрика" Binding="{Binding Rubric}" >
+									<DataGridTextColumn.ElementStyle>
+										<Style>
+											<Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+											<Setter Property="TextBlock.TextAlignment" Value="Center"/>
+										</Style>
+									</DataGridTextColumn.ElementStyle>
+								</DataGridTextColumn>
+								<DataGridTextColumn Width="*" Header="Текст" Binding="{Binding Text}" >
+									<DataGridTextColumn.ElementStyle>
+										<Style>
+											<Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+										</Style>
+									</DataGridTextColumn.ElementStyle>
+								</DataGridTextColumn>
+								<DataGridTextColumn Width="150" Header="Введено" Binding="{Binding Created}" />
+								<DataGridTextColumn Width="100" Header="Начало" Binding="{Binding StartIssue}" />
+								<DataGridTextColumn Width="100" Header="Конец" Binding="{Binding EndIssue}" />
+							</DataGrid.Columns>
+						</DataGrid>
+
+					</Grid>
+				</TabItem>
+
+				<TabItem Header="Рекламодатели">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="40"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<Button Command="{Binding NewAdvertizerCommand}" Content="Новый рекламодатель" HorizontalAlignment="Right" Padding="10,0" Margin="0,5,0,5" />
+
+						<DataGrid Name="AdvertizersGrid" IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding AllAdvertizers}" SelectedItem="{Binding SelectedAdvertizer}" AutoGenerateColumns="False" >
+
+							<DataGrid.InputBindings>
+								<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=OpenAdvertizerCommand}" CommandParameter="{Binding ElementName=AdvertizersGrid, Path=SelectedItem}" />
+							</DataGrid.InputBindings>
+
+							<DataGrid.Columns>
+								<DataGridTextColumn Width="*" Header="Название" Binding="{Binding Name}" />
+								<DataGridTextColumn Width="*" Header="Контактное лицо" Binding="{Binding ContactName}" />
+								<DataGridTextColumn Width="*" Header="Телефон" Binding="{Binding Phone}" />
+								<DataGridTextColumn Width="*" Header="Факс" Binding="{Binding Fax}" />
+								<DataGridTextColumn Width="*" Header="Email" Binding="{Binding Email}" />
+							</DataGrid.Columns>
+						</DataGrid>
+
+					</Grid>
+				</TabItem>
+
+			</TabControl>
+
+
+			<Border Visibility="{Binding VisibilityServerProblems}" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" BorderBrush="Red" BorderThickness="1">
+				<TextBlock  Text="Возникли проблемы соединения с сервером." Foreground="Red" FontSize="16" Margin="30" />
+			</Border>
+
+		</Grid>
+
+
+
+	</DockPanel>
 </Window>
