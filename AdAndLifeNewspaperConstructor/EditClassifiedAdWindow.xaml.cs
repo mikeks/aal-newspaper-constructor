@@ -23,5 +23,6 @@ namespace VitalConnection.AAL.Builder
 		{
 			InitializeComponent();
 		}
-	}
+
+    }
 }

@@ -21,6 +21,7 @@ namespace VitalConnection.AAL.Builder
             if (!Properties.Settings.Default.IsConvertPath) return ph;
 			ph = ph.Replace(@"\\Server02\designer4\_TIFF images\", @"D:\_TIFF images\");
 			ph = ph.Replace(@"Z:\_TIFF images\", @"D:\_TIFF images\");
+			ph = ph.Replace(@"Z:\_Articles\", @"D:\_Articles\");
 			ph = ph.Replace(@"\\Server02\designer4\_Classified\All Images\kartinki dlya rubrik\", @"D:\_TIFF images\ClassifiedImagesForRubrics\");
 
             if (ph.ToLower().StartsWith("z:") || ph.ToLower().StartsWith("\\\\server02")) return null;

@@ -11,10 +11,10 @@
 			<MenuItem Header="Команды">
 				<MenuItem Header="Новый выпуск газеты..." Command="{Binding NewIssueCommand}" />
 				<MenuItem Header="Новый рекламный блок..." Command="{Binding NewAdModuleCommand}" />
-				<!--<MenuItem Header="Проверить выпуск на ошибки" Command="{Binding ValidateIssueCommand}" />-->
 				<MenuItem Header="Экспорт в InDesign..." Command="{Binding BuildIssueCommand}" />
 				<Separator />
 				<MenuItem Header="О программе..." Command="{Binding AboutCommand}" />
+                <MenuItem Header="Синхронизировать Classified с сайтом..." Command="{Binding SyncClassifiedCommand}" />
 				<MenuItem Header="Выход" Click="ExitApp_Click" />
 			</MenuItem>
 		</Menu>
@@ -194,8 +194,9 @@
 								</DataGridTextColumn>
 								<DataGridTextColumn Width="150" Header="Введено" Binding="{Binding Created}" />
 								<DataGridTextColumn Width="100" Header="Начало" Binding="{Binding StartIssue}" />
-								<DataGridTextColumn Width="100" Header="Конец" Binding="{Binding EndIssue}" />
-							</DataGrid.Columns>
+                                <DataGridTextColumn Width="100" Header="Конец" Binding="{Binding EndIssue}" />
+                                <DataGridTextColumn Width="50" Header="Сайт" Binding="{Binding WebsitePromitionInfo}" />
+                            </DataGrid.Columns>
 						</DataGrid>
 
 					</Grid>
@@ -230,7 +231,7 @@
 			</TabControl>
 
 
-			<Border Visibility="{Binding VisibilityServerProblems}" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" BorderBrush="Red" BorderThickness="1">
+            <Border Visibility="{Binding VisibilityServerProblems}" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" BorderBrush="Red" BorderThickness="1">
 				<TextBlock  Text="Возникли проблемы соединения с сервером." Foreground="Red" FontSize="16" Margin="30" />
 			</Border>
 

@@ -132,6 +132,8 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="AdModulesManagement\AdsOnPageManager.cs" />
     <Compile Include="ViewModel\NewIssueViewModel.cs" />
+    <Compile Include="WebsiteSync\WebiteAdminHelper.cs" />
+    <Compile Include="WebsiteSync\WebsiteSync.cs" />
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

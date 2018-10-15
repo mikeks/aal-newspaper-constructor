@@ -21,7 +21,8 @@
 			<RowDefinition />
 			<RowDefinition />
 			<RowDefinition />
-			<RowDefinition />
+            <RowDefinition Height="60" />
+            <RowDefinition />
 		</Grid.RowDefinitions>
 
 
@@ -59,7 +60,26 @@
         <ComboBox Grid.Row="7" Grid.Column="2" Height="20" VerticalAlignment="Top" ItemsSource="{Binding Path=AllPaymentMethods}" SelectedItem="{Binding Path=Ad.PaymentMethod, Mode=TwoWay}" />
 		<Label Grid.Row="8" Content="SM" />
         <ComboBox Grid.Row="8" Grid.Column="2" Height="20" VerticalAlignment="Top" ItemsSource="{Binding Path=AllSM}" SelectedItem="{Binding Path=Ad.SM, Mode=TwoWay}" />
-		<StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <TextBlock Grid.Row="9">
+            1. Выделить объявление на сайте
+            <LineBreak />
+            2. Поставить в TOP сайта
+            <LineBreak />
+            3. Рекламировать на Facebook
+        </TextBlock>
+        <StackPanel Grid.Row="9" Grid.Column="2" VerticalAlignment="Top">
+            <!--<CheckBox Content="ВКЛЮЧИТЬ (за доп. плату)" IsChecked="{Binding Path=Ad.IsPaid, Mode=TwoWay}" />-->
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 5">
+                <TextBlock Width="100">Оплачено:</TextBlock>
+                <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding Path=Ad.WebsitePromitionPrice, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Width="100">Окончание:</TextBlock>
+                <DatePicker Text="{Binding Path=Ad.WebsitePromotionExpirationDate, Mode=TwoWay}"  />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="10" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Content="Сохранить" Margin="0,0,10,0" Padding="10,0" Command="{Binding SaveCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
             <Button Content="Отмена" Padding="10,0"  Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
 		</StackPanel>

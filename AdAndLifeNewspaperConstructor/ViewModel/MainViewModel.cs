@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using VitalConnection.AAL.Builder.AdModulesManagement;
 using VitalConnection.AAL.Builder.IndesignExport;
 using VitalConnection.AAL.Builder.Model;
+using VitalConnection.AAL.Builder.WebsiteAdmin;
 
 namespace VitalConnection.AAL.Builder.ViewModel
 {
@@ -980,6 +981,13 @@ namespace VitalConnection.AAL.Builder.ViewModel
             }
         }
 
+        public ICommand SyncClassifiedCommand => new DelegateCommand(() =>
+        {
+            WebsiteSync.WebsiteSync.SyncClassified();
+        });
+
+
+
         public ICommand AboutCommand
         {
             get
@@ -999,6 +1007,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
             }
         }
 
+        
 
 
 

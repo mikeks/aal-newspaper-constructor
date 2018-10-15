@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using VitalConnection.AAL.Builder.WebsiteSync;
 
 namespace AdAndLifeNewspaperConstructor
 {
@@ -13,5 +14,9 @@ namespace AdAndLifeNewspaperConstructor
     /// </summary>
     public partial class App : Application
     {
+        public App()
+        {
+            WebsiteSync.Init();
+        }
     }
 }

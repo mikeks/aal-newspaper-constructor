@@ -61,7 +61,12 @@ namespace VitalConnection.AAL.Builder.Model
 		public string SM { get; set; }
 		public DateTime Created { get; private set; }
 
-		public ClassifiedAd()
+        public decimal WebsitePromitionPrice { get; set; }
+        public DateTime? WebsitePromotionExpirationDate { get; set; }
+
+        public string WebsitePromitionInfo => WebsitePromitionPrice > 0 ? $"${WebsitePromitionPrice:F0}" : "";
+
+        public ClassifiedAd()
 		{
 			StartIssue = new IssueNumber(DateTime.Now.Year, 1);
 			EndIssue = new IssueNumber(DateTime.Now.Year, 52);
@@ -111,7 +116,12 @@ namespace VitalConnection.AAL.Builder.Model
 
 			SM = (string)ResolveDbNull(rdr["clasSM"]);
 			Created = (DateTime)rdr["clasTimestamp"];
-		}
+
+            WebsitePromitionPrice = (decimal)ResolveDbNull(rdr["WebsitePromitionPrice"], 0m);
+            WebsitePromotionExpirationDate = (DateTime?)ResolveDbNull(rdr["WebsitePromotionExpirationDate"]);
+
+
+        }
 
         public void Revert()
         {
@@ -120,7 +130,7 @@ namespace VitalConnection.AAL.Builder.Model
 
 		public void Delete()
 		{
-			ExecSQL($"delete from [ClassifiedAd] where Id = {Id}");
+			ExecStoredProc($"DeleteClassifiedAd", (cmd) => cmd.Parameters.AddWithValue("@id", Id));
 		}
 
 		public void Save()
@@ -144,6 +154,8 @@ namespace VitalConnection.AAL.Builder.Model
                 cmd.Parameters.AddWithValue("@endIssueNumber", EndIssue.Number);
                 cmd.Parameters.AddWithValue("@endIssueYear", EndIssue.Year);
                 cmd.Parameters.AddWithValue("@sm", SM);
+                cmd.Parameters.AddWithValue("@websitePromitionPrice", WebsitePromitionPrice);
+                cmd.Parameters.AddWithValue("@websitePromotionExpirationDate", WebsitePromotionExpirationDate);
             });
 		}
 

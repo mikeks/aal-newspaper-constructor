@@ -86,7 +86,7 @@ Stack: {e.StackTrace}
             }
         }
 
-        protected static void ExecStoredProc(string storedProcName, Action<SqlCommand> addParAction)
+        public static void ExecStoredProc(string storedProcName, Action<SqlCommand> addParAction)
         {
             _exec(storedProcName, addParAction, CommandType.StoredProcedure);
         }
