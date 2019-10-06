@@ -9,7 +9,7 @@ using VitalConnection.AAL.Builder.Model;
 
 namespace VitalConnection.AAL.Builder.ViewModel
 {
-	class EditClassifiedAdViewModel
+	class EditClassifiedAdViewModel : ObservableObject
 	{
 
 		private ClassifiedAd _ad;
@@ -107,9 +107,26 @@ namespace VitalConnection.AAL.Builder.ViewModel
 		{
 			get
 			{
-				return new string[] { "G.", "M.", "M.V", "MK", "VC." }; 
+				//var all = new List<string>(ClassifiedSM.All);
+				//if (!all.Contains(_ad.SM)) all.Add(_ad.SM);
+				return ClassifiedSM.All;
 			}
 		}
+
+		public ICommand AddSMCommand => new DelegateCommand<Window>((w) => {
+			w.Close();
+			new NewSMWindow().ShowDialog();
+		});
+
+		public ICommand RemoveSMCommand => new DelegateCommand<Window>((w) => {
+
+			if (!AllSM.Contains(_ad.SM)) return;
+			if (MessageBox.Show($"Удалить значение \"{_ad.SM}\"?", "Удалим-ка", MessageBoxButton.YesNoCancel, MessageBoxImage.Question) != MessageBoxResult.Yes)
+				return;
+			ClassifiedSM.Remove(_ad.SM);
+			w.Close();
+			//RaisePropertyChangedEvent("AllSM");
+		});
 
 		private IEnumerable<int> _allIssues;
 		public IEnumerable<int> AllIssues

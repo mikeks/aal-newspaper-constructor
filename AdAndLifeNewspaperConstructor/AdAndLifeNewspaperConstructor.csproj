@@ -98,6 +98,10 @@
     <Compile Include="EditAdModuleWindow.xaml.cs">
       <DependentUpon>EditAdModuleWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\ClassifiedSM.cs" />
+    <Compile Include="NewSMWindow.xaml.cs">
+      <DependentUpon>NewSMWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewIssueWindow.xaml.cs">
       <DependentUpon>NewIssueWindow.xaml</DependentUpon>
     </Compile>
@@ -131,6 +135,7 @@
     <Compile Include="ViewModel\EditAdModuleWindowViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="AdModulesManagement\AdsOnPageManager.cs" />
+    <Compile Include="ViewModel\NewSmViewModel.cs" />
     <Compile Include="ViewModel\NewIssueViewModel.cs" />
     <Compile Include="WebsiteSync\WebiteAdminHelper.cs" />
     <Compile Include="WebsiteSync\WebsiteSync.cs" />
@@ -141,6 +146,10 @@
     <Page Include="EditAdModuleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewSMWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="NewIssueWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -241,17 +250,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="InDesign">
-      <Guid>{451AF4B6-5D30-4D46-95CE-E4F900BF2D44}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
@@ -266,16 +264,26 @@
   <ItemGroup>
     <PublishFile Include="IndesignExport\AdAndLifeInDesignScript.tt">
       <Visible>False</Visible>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <COMReference Include="InDesign">
+      <Guid>{C12DDD4E-6CDC-4C7B-AE0E-A98E01E0FA59}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
