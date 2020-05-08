@@ -17,15 +17,11 @@ namespace VitalConnection.AAL.Builder.WebsiteSync
         public static void Init()
         {
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += dispatcherTimer_Tick;
+			dispatcherTimer.Tick += (sender, e) => DoSync(true);
             dispatcherTimer.Interval = new TimeSpan(4, 0, 0);
             dispatcherTimer.Start();
         }
 
-        private static void dispatcherTimer_Tick(object sender, EventArgs e)
-        {
-            DoSync(true);
-        }
 
 
         private static void DoSync(bool silent = false)
@@ -57,6 +53,31 @@ namespace VitalConnection.AAL.Builder.WebsiteSync
         {
             DoSync();
         }
+
+		public static void SyncArticles(Action onFinished)
+		{
+			Task.Run(() =>
+			{
+				try
+				{
+					DbObject.ExecStoredProc("ExportArticlesTask", null);
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						onFinished();
+						MessageBox.Show("Синхронизация статей с сайтом успешно выполнена.", "Удача", MessageBoxButton.OK, MessageBoxImage.Information);
+					});
+				}
+				catch (Exception e)
+				{
+					Application.Current.Dispatcher.Invoke(() =>
+					{
+						onFinished();
+						MessageBox.Show("Ошибка синхронизации статей с сайтом AdAndLife. " + e.Message, "Проблемка тута...", MessageBoxButton.OK, MessageBoxImage.Error);
+					});
+				}
+			});
+			
+		}
 
     }
 }

@@ -202,6 +202,50 @@
 					</Grid>
 				</TabItem>
 
+				<TabItem Header="Статьи">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="40"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<Button IsEnabled="{Binding SyncArticlesEnabled}" Command="{Binding SyncArticlesCommand}" Content="Синхронизировать с сайтом" Padding="10,0" Margin="5,5,10,5" Width="200" HorizontalAlignment="Left"  />
+
+						<ProgressBar Visibility="{Binding ArticleSyncProgressBarVisibility}" IsIndeterminate="True" Width="200" Padding="10,0" Margin="0,5,0,5"></ProgressBar>
+						
+						<StackPanel Height="40" Orientation="Horizontal" HorizontalAlignment="Right">
+							<Button Command="{Binding DeleteArticleCommand}" Visibility="{Binding DeleteArticleVisibility}" Content="Удалить статью" Padding="10,0" Margin="0,5,10,5" />
+							<Button Command="{Binding NewArticleCommand}" Content="Новая статья" Padding="10,0" Margin="0,5,5,5" />
+						</StackPanel>
+
+						<DataGrid IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding Articles}" Name="ArticlesGrid" SelectedItem="{Binding SelectedArticle}" AutoGenerateColumns="False" >
+
+							<DataGrid.RowStyle>
+								<Style TargetType="DataGridRow">
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding IsSynced}" Value="false">
+											<Setter Property="Background" Value="LightYellow"></Setter>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</DataGrid.RowStyle>
+
+							<DataGrid.InputBindings>
+								<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=OpenArticleCommand}"  />
+							</DataGrid.InputBindings>
+
+							<DataGrid.Columns>
+								<DataGridTextColumn Width="200" Header="Рубрика" Binding="{Binding Rubric}" />
+								<DataGridTextColumn Width="200" Header="Автор" Binding="{Binding Author}" />
+								<DataGridTextColumn Width="300" Header="Название" Binding="{Binding Name}" />
+								<DataGridTextColumn Width="150" Header="Дата создания" Binding="{Binding Created}" />
+							</DataGrid.Columns>
+						</DataGrid>
+
+					</Grid>
+				</TabItem>
+
+
 				<TabItem Header="Рекламодатели">
 					<Grid>
 						<Grid.RowDefinitions>
@@ -227,6 +271,7 @@
 
 					</Grid>
 				</TabItem>
+
 
 			</TabControl>
 

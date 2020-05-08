@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,11 +11,11 @@ using System.Windows.Media.Imaging;
 using VitalConnection.AAL.Builder.AdModulesManagement;
 using VitalConnection.AAL.Builder.IndesignExport;
 using VitalConnection.AAL.Builder.Model;
-using VitalConnection.AAL.Builder.WebsiteAdmin;
+using VitalConnection.AAL.Builder.Model.Articles;
 
 namespace VitalConnection.AAL.Builder.ViewModel
 {
-    public class MainViewModel : ObservableObject
+	public class MainViewModel : ObservableObject
     {
 
         public NewspaperPage CurrentPage { get; set; }
@@ -647,6 +645,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
                 RaisePropertyChangedEvent("CurrentIssue");
                 RaisePropertyChangedEvent("CurrentIssueId");
                 RefreshClassified(false);
+				RefreshArticles();
             }
         }
 
@@ -675,8 +674,9 @@ namespace VitalConnection.AAL.Builder.ViewModel
                 NewspaperDatabase.Current = value;
                 RefreshIssues();
                 RefreshClassified(true);
-            }
-        }
+				RefreshArticles();
+			}
+		}
 
 
 
@@ -1007,9 +1007,102 @@ namespace VitalConnection.AAL.Builder.ViewModel
             }
         }
 
-        
+
+		public ICommand NewArticleCommand => new DelegateCommand(() =>
+		{
+			new EditArticleWindow(new NewspaperArticle(CurrentIssue.Year, CurrentIssue.Number)).ShowDialog();
+		});
+
+		public ICommand OpenArticleCommand => new DelegateCommand(() =>
+		{
+			if (SelectedArticle == null) return;
+			new EditArticleWindow(SelectedArticle).ShowDialog();
+		});
+
+		public ICommand DeleteArticleCommand => new DelegateCommand(() =>
+		{
+			if (SelectedArticle == null) return;
+			if (MessageBox.Show($"Удалить статью \"{SelectedArticle.Name}\"?", "Подтвердите хладнокровное убийство", MessageBoxButton.OKCancel, MessageBoxImage.Warning) != MessageBoxResult.OK) return;
+			SelectedArticle.Delete();
+			RefreshArticles();
+		});
 
 
 
-    }
+		public Visibility DeleteArticleVisibility => SelectedArticle == null ? Visibility.Collapsed : Visibility.Visible;
+
+		private NewspaperArticle _selectedArticle;
+		public NewspaperArticle SelectedArticle
+		{
+			get
+			{
+				return _selectedArticle;
+			}
+			set
+			{
+				_selectedArticle = value;
+				RaisePropertyChangedEvent("DeleteArticleVisibility");
+			}
+		}
+
+		private IEnumerable<NewspaperArticle> _articles;
+
+		public IEnumerable<NewspaperArticle> Articles
+		{
+			get
+			{
+				if (_articles == null) _articles = NewspaperArticle.GetArticles(CurrentIssue.Year, CurrentIssue.Number);
+				return _articles;
+			}
+		}
+
+		public void RefreshArticles()
+		{
+			_articles = null;
+			RaisePropertyChangedEvent("Articles");
+		}
+
+
+		//public Visibility SyncArticlesVisibility
+		//{
+		//	get
+		//	{
+		//		return Articles.Any((x) => !x.SyncedWithSite) ? Visibility.Visible : Visibility.Collapsed;
+		//	}
+		//}
+
+		public bool SyncArticlesEnabled { get; private set; } = true;
+
+		private Visibility _articleSyncProgressBarVisibility = Visibility.Collapsed;
+
+		public Visibility ArticleSyncProgressBarVisibility
+		{
+			get
+			{
+				return _articleSyncProgressBarVisibility;
+			}
+			set
+			{
+				_articleSyncProgressBarVisibility = value;
+				RaisePropertyChangedEvent("ArticleSyncProgressBarVisibility");
+			}
+		}
+
+		public ICommand SyncArticlesCommand => new DelegateCommand(() =>
+		{
+			ArticleSyncProgressBarVisibility = Visibility.Visible;
+			SyncArticlesEnabled = false;
+			RaisePropertyChangedEvent("SyncArticlesEnabled");
+			WebsiteSync.WebsiteSync.SyncArticles(() =>
+			{
+				ArticleSyncProgressBarVisibility = Visibility.Collapsed;
+				SyncArticlesEnabled = true;
+				RaisePropertyChangedEvent("SyncArticlesEnabled");
+				RefreshArticles();
+			});
+
+		});
+		
+			
+	}
 }

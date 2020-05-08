@@ -70,9 +70,26 @@
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DocumentFormat.OpenXml">
+      <HintPath>libs\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.16.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.16\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlToOpenXml">
+      <HintPath>libs\HtmlToOpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenXmlPowerTools">
+      <HintPath>libs\OpenXmlPowerTools.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Packaging">
+      <HintPath>libs\System.IO.Packaging.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -94,9 +111,16 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\Articles\ArticleRubric.cs" />
+    <Compile Include="Model\Articles\HTMLConverter.cs" />
+    <Compile Include="Model\Articles\NewspaperArticle.cs" />
+    <Compile Include="Model\Articles\UriFixer.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="EditAdModuleWindow.xaml.cs">
       <DependentUpon>EditAdModuleWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EditArticleWindow.xaml.cs">
+      <DependentUpon>EditArticleWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\ClassifiedSM.cs" />
     <Compile Include="NewSMWindow.xaml.cs">
@@ -130,6 +154,7 @@
     <Compile Include="ObservableObject.cs" />
     <Compile Include="Utility.cs" />
     <Compile Include="ViewModel\EditAdvertizerViewModel.cs" />
+    <Compile Include="ViewModel\EditArticleViewModel.cs" />
     <Compile Include="ViewModel\EditClassifiedAdViewModel.cs" />
     <Compile Include="AdModulesManagement\ImageSelectionMode.cs" />
     <Compile Include="ViewModel\EditAdModuleWindowViewModel.cs" />
@@ -144,6 +169,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="EditAdModuleWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditArticleWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -222,12 +251,28 @@
     </None>
     <None Include="AdAndLifeNewspaperConstructor_TemporaryKey.pfx" />
     <Resource Include="Fatcow-Farm-Fresh-Newspaper.ico" />
+    <None Include="ArticlePreview\ArticleTemplate.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ArticlePreview\main.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ArticlePreview\wait100.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ArticlePreview\error.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="ArticlePreview\FormattingRules.htm">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="IndesignExport\Template\aal-baltimore.indt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="IndesignExport\Template\aal-philadelphia.indt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -264,12 +309,12 @@
   <ItemGroup>
     <PublishFile Include="IndesignExport\AdAndLifeInDesignScript.tt">
       <Visible>False</Visible>
-      <PublishState>Exclude</PublishState>
-      <IncludeHash>True</IncludeHash>
       <Group>
       </Group>
       <TargetPath>
       </TargetPath>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
   </ItemGroup>

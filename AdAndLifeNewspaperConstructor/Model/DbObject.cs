@@ -36,14 +36,24 @@ namespace VitalConnection.AAL.Builder.Model
             }
         }
 
-        protected static void ReadSql(string sql, Action<SqlDataReader> f)
+		protected static void ReadSql(string sql, Action<SqlDataReader> f, CommandType cmdType = CommandType.Text)
+		{
+			ReadSql(sql, null, f, cmdType);
+		}
+
+
+		protected static void ReadSql(string sql, Action<SqlCommand> addParAction, Action<SqlDataReader> f, CommandType cmdType = CommandType.Text)
         {
             try
             {
                 using (var conn = GetConnection())
                 {
-                    var cmd = new SqlCommand(sql, conn);
-                    using (var rdr = cmd.ExecuteReader())
+					var cmd = new SqlCommand(sql, conn)
+					{
+						CommandType = cmdType
+					};
+					addParAction?.Invoke(cmd);
+					using (var rdr = cmd.ExecuteReader())
                     {
                         while (rdr.Read())
                         {
@@ -76,17 +86,36 @@ namespace VitalConnection.AAL.Builder.Model
                 Directory.CreateDirectory(@"c:\NewspaperBuilderErrors");
                 var dt = DateTime.Now.ToString("dd-MM-yyyy hh-mm-ss");
                 var s = 
-$@"Stored proc: {storedProcName}
-Error: {e.Message}
-Inner: {e.InnerException?.Message}
-Stack: {e.StackTrace}
-";
+					$@"Stored proc: {storedProcName}
+					Error: {e.Message}
+					Inner: {e.InnerException?.Message}
+					Stack: {e.StackTrace}
+					";
                 File.WriteAllText($@"c:\NewspaperBuilderErrors\{dt}.log", s);
                 MessageBox.Show("Произошла ошибка.", "Ой...", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             }
         }
 
-        public static void ExecStoredProc(string storedProcName, Action<SqlCommand> addParAction)
+
+		protected int ExecStoredProcWithReturnValue(string sql, Action<SqlCommand> addParAction)
+		{
+			using (var conn = GetConnection())
+			{
+				var cmd = new SqlCommand(sql, conn)
+				{
+					CommandType = CommandType.StoredProcedure
+				};
+				addParAction?.Invoke(cmd);
+				var rv = cmd.Parameters.Add("@ReturnValue", SqlDbType.Int);
+				rv.Direction = ParameterDirection.ReturnValue;
+				cmd.ExecuteNonQuery();
+				return (int)rv.Value;
+			}
+		}
+
+
+
+		public static void ExecStoredProc(string storedProcName, Action<SqlCommand> addParAction)
         {
             _exec(storedProcName, addParAction, CommandType.StoredProcedure);
         }
