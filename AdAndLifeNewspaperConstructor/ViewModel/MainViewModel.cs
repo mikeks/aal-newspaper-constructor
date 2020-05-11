@@ -102,7 +102,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			var l = item as AdModule;
 			if (IsAdModuleMustFitThePage && CurrentPage != null && l.Grid.Id != CurrentPage.Grid.Id) return false;
 
-			if (IsAdModuleAdvertizerFilterOn && AdModuleAdvertizerFilter != null && l.Advertizer != AdModuleAdvertizerFilter) return false;
+			if (IsAdModuleAdvertizerFilterOn && AdModuleAdvertizerFilter != null && l.Advertiser != AdModuleAdvertizerFilter) return false;
 
 			if (string.IsNullOrWhiteSpace(FilterString)) return true;
 			return l.Name.ToLower().Contains(FilterString.ToLower().Trim());
@@ -310,7 +310,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 		}
 
-		public string AdModuleAdvertiserName => $"Рекламодатель: {_selectedAdModule?.Advertizer?.Name ?? "не указан"}";
+		public string AdModuleAdvertiserName => $"Рекламодатель: {_selectedAdModule?.Advertiser?.Name ?? "не указан"}";
 
 		public string AdModulePrice => $"Цена: {_selectedAdModule?.Price}";
 
@@ -982,10 +982,10 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			var invoices = new List<QuickBookInvoice>();
 			foreach (var ad in IssueAdModules)
 			{
-				if (string.IsNullOrWhiteSpace(ad.AdModule.Advertizer?.Name) || ad.AdModule.Price <= 0 || !ad.IsSelected) continue;
+				if (string.IsNullOrWhiteSpace(ad.AdModule.Advertiser?.Name) || ad.AdModule.Price <= 0 || !ad.IsSelected) continue;
 				var inv = new QuickBookInvoice()
 				{
-					CustomerName = ad.AdModule.Advertizer.Name,
+					CustomerName = ad.AdModule.Advertiser.Name,
 					NewspaperNumber = CurrentIssue.Number,
 					Price = ad.AdModule.Price
 				};

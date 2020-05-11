@@ -14,7 +14,7 @@ namespace VitalConnection.AAL.Builder.Model
     public class ConnectionProblemException : Exception { }
 
 
-    public class DbObject
+    public class DbObject : ObservableObject
     {
 
 

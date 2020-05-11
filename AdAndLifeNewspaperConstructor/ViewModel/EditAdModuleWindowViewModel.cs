@@ -158,62 +158,42 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		}
 
-        public IEnumerable<GridType> AllGridTypes
-        {
-            get
-            {
-                return GridType.AllTypes;
-            }
-        }
+        public IEnumerable<GridType> AllGridTypes => GridType.AllTypes;
 
         public IEnumerable<Advertizer> AllAdvertisers => Advertizer.All;
 
 
-        public ICommand SelectNewFileCommand
+        public ICommand SelectNewFileCommand => new DelegateCommand(async () => await SelectNewFile());
+
+        public ICommand LocateOnDiscCommand => new DelegateCommand(() => {
+            var ph = Utility.ConvertFilePath(Ad.FullPath);
+            if (MessageBox.Show("Файл находится по следующему пути:\n" + ph + "\n\nПопытаться открыть его?", "Файл", MessageBoxButton.YesNo, MessageBoxImage.Information) != MessageBoxResult.Yes) return;
+            Process.Start("explorer.exe", ph);
+        });
+
+        public ICommand SaveCommand => new DelegateCommand(() =>
         {
-            get
-            {
-                return new DelegateCommand(() =>
-                {
-                    #pragma warning disable CS4014 
-                    SelectNewFile();
-                });
-            }
-        }
+            Ad.Save();
+            MainViewModel.Instance.RefreshAdModules();
+        });
 
-        public ICommand LocateOnDiscCommand
+        public ICommand RemoveAdvertiserCommand => new DelegateCommand(() =>
         {
-            get
-            {
-                return new DelegateCommand(() =>
-                {
-                    Process.Start("explorer.exe", Utility.ConvertFilePath(Ad.FullPath));
-                });
-            }
-        }
+            Ad.Advertiser = null;
+            RaisePropertyChangedEvent("Ad");
+        });
 
-        public ICommand SaveCommand
+        public ICommand FindAdvertiserCommand => new DelegateCommand(() =>
         {
-            get
+            var w = new FindAdvertiserWindow();
+            var r = w.ShowDialog();
+            if (r == true)
             {
-                return new DelegateCommand(() =>
-                {
-                    Ad.Save();
-                    MainViewModel.Instance.RefreshAdModules();
-                });
+                Ad.Advertiser = (w.DataContext as FindAdvertiserViewModel).SelectedAdvertiser;
+                RaisePropertyChangedEvent("Ad");
             }
-        }
-
-        //public ICommand CancelCommand
-        //{
-        //    get
-        //    {
-        //        return new DelegateCommand(() =>
-        //        {
-        //        });
-        //    }
-        //}
-
+            
+        });
 
     }
 }

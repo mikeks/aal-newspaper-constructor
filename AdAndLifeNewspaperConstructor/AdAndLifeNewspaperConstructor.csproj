@@ -132,6 +132,9 @@
     <Compile Include="AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FindAdvertiserWindow.xaml.cs">
+      <DependentUpon>FindAdvertiserWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Model\Articles\ArticleRubric.cs" />
     <Compile Include="Model\Articles\HTMLConverter.cs" />
     <Compile Include="Model\Articles\NewspaperArticle.cs" />
@@ -184,6 +187,7 @@
     <Compile Include="ViewModel\EditClassifiedAdViewModel.cs" />
     <Compile Include="AdModulesManagement\ImageSelectionMode.cs" />
     <Compile Include="ViewModel\EditAdModuleWindowViewModel.cs" />
+    <Compile Include="ViewModel\FindAdvertiserViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="AdModulesManagement\AdsOnPageManager.cs" />
     <Compile Include="ViewModel\NewSmViewModel.cs" />
@@ -193,6 +197,10 @@
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FindAdvertiserWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="EditAdModuleWindow.xaml">
       <SubType>Designer</SubType>

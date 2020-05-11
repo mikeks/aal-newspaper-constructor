@@ -30,7 +30,7 @@ namespace VitalConnection.AAL.Builder.Model
 			}
 		}
 
-		public bool CanSelect => AdModule?.Advertizer?.Name != null && AdModule?.Price > 0;
+		public bool CanSelect => AdModule?.Advertiser?.Name != null && AdModule?.Price > 0;
 
 		public void ReadFromDb(SqlDataReader rdr)
 		{
