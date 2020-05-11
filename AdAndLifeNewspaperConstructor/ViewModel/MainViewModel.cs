@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -338,6 +339,22 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 		}
 
+		public bool SelectAllInvoices
+		{
+			get
+			{
+				return Invoices.All((x) => x.IsSelected);
+			}
+			set
+			{
+				foreach (var m in Invoices)
+				{
+					m.IsSelected = value;
+				}
+				ReloadInvoices(false);
+			}
+		}
+
 		//private void ResetIssueAdModules()
 		//{
 		//	_issueAdModules = null;
@@ -666,7 +683,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		public NewspaperDatabase CurrentDatabase
 		{
-			get
+			get 
 			{
 				return NewspaperDatabase.Current;
 			}
@@ -677,6 +694,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				RefreshIssues();
 				RefreshClassified(true);
 				RefreshArticles();
+				ReloadInvoices(true);
 			}
 		}
 
@@ -970,24 +988,25 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		public ICommand QuickBookImportCustomers => new DelegateCommand(async () =>
 		{
-			QuickBookWarning();
+			if (!QuickBookWarning()) return;
 			VisibilityQuickBookConnect = Visibility.Visible;
 			var cnt = await QuickBookManager.ImportCustomers();
 			VisibilityQuickBookConnect = Visibility.Collapsed;
 			MessageBox.Show("Успешно загружено " + cnt + " рекламодателей.", "Ура, заработало!", MessageBoxButton.OK, MessageBoxImage.Information);
 		});
 
-		public ICommand QuickbookExportInvoices => new DelegateCommand(async () =>
+		public ICommand CreateInvoices => new DelegateCommand(() =>
 		{
-			var invoices = new List<QuickBookInvoice>();
+			var invoices = new List<Invoice>();
 			foreach (var ad in IssueAdModules)
 			{
 				if (string.IsNullOrWhiteSpace(ad.AdModule.Advertiser?.Name) || ad.AdModule.Price <= 0 || !ad.IsSelected) continue;
-				var inv = new QuickBookInvoice()
+				var inv = new Invoice()
 				{
 					CustomerName = ad.AdModule.Advertiser.Name,
 					NewspaperNumber = CurrentIssue.Number,
-					Price = ad.AdModule.Price
+					Price = ad.AdModule.Price,
+					PageNumber = ad.Page.Number
 				};
 				invoices.Add(inv);
 			}
@@ -998,14 +1017,64 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				return;
 			}
 
-			QuickBookWarning();
+			if (MessageBox.Show($"Будет создано счетов: {invoices.Count}. Продолжить?", "Вопросец", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
 
-			if (MessageBox.Show($"Будет выставлено счетов: {invoices.Count}. Продолжить?", "Еще один вопрос", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
+			foreach (var invoice in invoices)
+			{
+				invoice.Save();
+			}
+
+			ReloadInvoices(true);
+			MessageBox.Show("Готово!", "Быстро получилось, да?", MessageBoxButton.OK, MessageBoxImage.Information);
+		});
+
+		public ObservableCollection<Invoice> Invoices { get; private set; } = new ObservableCollection<Invoice>(Invoice.All);
+
+		private void ReloadInvoices(bool fromDb)
+		{
+			if (fromDb) Invoice.ReloadAllFromDb();
+			Invoices = new ObservableCollection<Invoice>(Invoice.All);
+			RaisePropertyChangedEvent("Invoices");
+			RaisePropertyChangedEvent("SelectAllInvoices");
+		}
+
+		private IEnumerable<Invoice> GetSelectedInvoices()
+		{
+			var inv = Invoices.Where((x) => x.IsSelected);
+			if (inv.Count() == 0) MessageBox.Show("Счетов не выделено.", "Тут же пусто!", MessageBoxButton.OK, MessageBoxImage.Information);
+			return inv;
+		}
+
+		public ICommand DeleteInvoices => new DelegateCommand(() =>
+		{
+			var invs = GetSelectedInvoices();
+			if (invs.Count() == 0) return;
+			if (MessageBox.Show($"Вы уверены что хотите удалить счетов в количестве {invs.Count()} шт.?", "Что, правда?", MessageBoxButton.OKCancel, MessageBoxImage.Warning) != MessageBoxResult.OK) return;
+			foreach (var inv in invs)
+			{
+				inv.Delete();
+			}
+			ReloadInvoices(true);
+		});
+
+		public ICommand QuickbookExportInvoices => new DelegateCommand(async () =>
+		{
+			var invs = GetSelectedInvoices();
+			if (invs.Count() == 0) return;
+
+			if (!QuickBookWarning()) return;
+
+			var qbInvoices = QuickBookManager.MergeInvoices(invs);
+
+			if (MessageBox.Show($"Будет выставлено счетов: {qbInvoices.Count()} (всего реклам: {invs.Count()}). Продолжить?", "Еще один вопрос", MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK) return;
 
 			VisibilityQuickBookConnect = Visibility.Visible;
-			var cnt = await QuickBookManager.CreateInvoices(invoices);
-			if (cnt > 0) MessageBox.Show($"Сгенерировано {cnt} новых счетов в QuickBooks.", "Закончили", MessageBoxButton.OK, MessageBoxImage.Information);
+			var cnt = await QuickBookManager.CreateInvoices(qbInvoices);
 			VisibilityQuickBookConnect = Visibility.Collapsed;
+			if (cnt > 0)
+			{
+				MessageBox.Show($"Сгенерировано {cnt} новых счетов в QuickBooks.", "Закончили", MessageBoxButton.OK, MessageBoxImage.Information);
+			}
 		});
 
 

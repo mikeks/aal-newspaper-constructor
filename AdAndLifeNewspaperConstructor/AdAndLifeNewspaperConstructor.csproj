@@ -178,6 +178,8 @@
     <Compile Include="ObservableObject.cs" />
     <Compile Include="QuickBook\QuickBookCreateInvoice.cs" />
     <Compile Include="QuickBook\QuickBookImportCustomers.cs" />
+    <Compile Include="Model\Invoice.cs" />
+    <Compile Include="QuickBook\QuickBookInvoiceItem.cs" />
     <Compile Include="QuickBook\QuickBookInvoice.cs" />
     <Compile Include="QuickBook\QuickBookManager.cs" />
     <Compile Include="QuickBook\QuickBookRequest.cs" />

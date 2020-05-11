@@ -13,6 +13,7 @@ namespace VitalConnection.AAL.Builder.QuickBook
 
 		protected abstract void Action(QBSessionManager sessionManager, IMsgSetRequest request);
 
+		public bool IsFailed { get; private set; } = false;
 
 		public void Start()
 		{
@@ -47,12 +48,13 @@ namespace VitalConnection.AAL.Builder.QuickBook
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Возникла проблема с QuickBook.\n\n" + ex.Message.ToString() + "\nStack Trace: \n" + ex.StackTrace, "Ой ой ой", MessageBoxButton.OK, MessageBoxImage.Error);
+				MessageBox.Show("Возникла проблема при попытке подключится к QuickBooks. Убедитесь что QuickBooks запущен на этом компьютере и в нем открыта компания.\n\n" + ex.Message.ToString(), "Ой ой ой", MessageBoxButton.OK, MessageBoxImage.Error);
 				if (isSessionBegun)
 				{
 					sessionManager.EndSession();
 					sessionManager.CloseConnection();
 				}
+				IsFailed = true;
 			}
 		}
 

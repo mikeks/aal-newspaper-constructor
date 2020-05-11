@@ -26,14 +26,16 @@ namespace VitalConnection.AAL.Builder.QuickBook
 			
 			invoiceAdd.CustomerRef.FullName.SetValue(Invoice.CustomerName);
 
-			IInvoiceLineAdd invoiceLineAdd = invoiceAdd.ORInvoiceLineAddList.Append().InvoiceLineAdd;
-			invoiceLineAdd.ItemRef.FullName.SetValue(Invoice.ItemName);
-			invoiceLineAdd.Desc.SetValue(Invoice.Description);
-			var price = (double)Invoice.Price;
-			invoiceLineAdd.ORRatePriceLevel.Rate.SetValue(price);
-			invoiceLineAdd.Quantity.SetValue(Convert.ToDouble(1));
-			invoiceLineAdd.Amount.SetValue(price);
-
+			foreach (var item in Invoice.Items)
+			{
+				IInvoiceLineAdd invoiceLineAdd = invoiceAdd.ORInvoiceLineAddList.Append().InvoiceLineAdd;
+				invoiceLineAdd.ItemRef.FullName.SetValue(item.ItemName);
+				invoiceLineAdd.Desc.SetValue(item.Description);
+				var price = (double)item.Price;
+				invoiceLineAdd.ORRatePriceLevel.Rate.SetValue(price);
+				invoiceLineAdd.Quantity.SetValue(Convert.ToDouble(1));
+				invoiceLineAdd.Amount.SetValue(price);
+			}
 			var responseMsgSet = sessionManager.DoRequests(request);
 			IResponse response = responseMsgSet.ResponseList.GetAt(0);
 			StatusCode = response.StatusCode;

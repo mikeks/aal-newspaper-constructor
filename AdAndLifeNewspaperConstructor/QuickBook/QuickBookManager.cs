@@ -13,6 +13,24 @@ namespace VitalConnection.AAL.Builder.QuickBook
 	class QuickBookManager
 	{
 
+		public static IEnumerable<QuickBookInvoice> MergeInvoices(IEnumerable<Invoice> invoices)
+		{
+			var lst = new List<QuickBookInvoice>();
+			var customers = invoices.Select((x) => x.CustomerName).Distinct();
+			foreach (var customer in customers)
+			{
+				var qbInv = new QuickBookInvoice() { CustomerName = customer };
+				foreach (var inv in invoices.Where((x) => x.CustomerName == customer))
+				{
+					var itm = new QuickBookInvoiceItem() { NewspaperNumber = inv.NewspaperNumber, Price = inv.Price };
+					qbInv.Items.Add(itm);
+				}
+				lst.Add(qbInv);
+			}
+			return lst;
+		}
+
+
 		public static async Task<int> CreateInvoices(IEnumerable<QuickBookInvoice> invoices)
 		{
 			var cnt = 0;
@@ -20,6 +38,7 @@ namespace VitalConnection.AAL.Builder.QuickBook
 			{
 				var cr = new QuickBookCreateInvoice(inv);
 				await Task.Run(() => cr.Start());
+				if (cr.IsFailed) return 0;
 				if (cr.StatusCode != 0)
 				{
 					if (MessageBox.Show($"Возникла проблема с выставлением счета для {inv.CustomerName} (код {cr.StatusCode}). Продолжить генерировать остальные счета?", "Опа!", MessageBoxButton.YesNo, MessageBoxImage.Error) == MessageBoxResult.No)

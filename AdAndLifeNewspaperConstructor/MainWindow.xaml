@@ -253,8 +253,10 @@
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 
-						<CheckBox Content="Выделить все" Margin="10" IsChecked="{Binding SelectAllAdModules}" />
-						<Button Command="{Binding QuickbookExportInvoices}"  Width="200" HorizontalAlignment="Right" Content="Выставить счета в QuickBooks" Padding="10,0" Margin="5" />
+						<CheckBox Width="120" HorizontalAlignment="Left" Content="Выделить все" Margin="10" IsChecked="{Binding SelectAllAdModules}" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+							<Button Command="{Binding CreateInvoices}"  Width="200" HorizontalAlignment="Right" Content="Выставить счета" Padding="10,0" Margin="5" />
+						</StackPanel>
 
 						<DataGrid CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="1" ItemsSource="{Binding IssueAdModules}" SelectedItem="{Binding SelectedAdModuleOnPage}" AutoGenerateColumns="False" >
 
@@ -270,15 +272,41 @@
 										</Style>
 									</DataGridCheckBoxColumn.CellStyle>
 								</DataGridCheckBoxColumn>
-								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Страница" Binding="{Binding Page.Number}" />
-								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Рекламодатель" Binding="{Binding AdModule.Advertizer.Name}" />
-								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding AdModule.Price}" />
+								<DataGridTextColumn IsReadOnly="True" Width="120" Header="Страница" Binding="{Binding Page.Number}" />
+								<DataGridTextColumn IsReadOnly="True" Width="400" Header="Рекламодатель" Binding="{Binding AdModule.AdvertiserName}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding AdModule.Price, StringFormat=N2}" />
 							</DataGrid.Columns>
 						</DataGrid>
 
 					</Grid>
 				</TabItem>
 
+				<TabItem Header="Счета">
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="40"/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+
+						<CheckBox Content="Выделить все" Margin="10" Width="120" HorizontalAlignment="Left" IsChecked="{Binding SelectAllInvoices}" />
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+							<Button Command="{Binding DeleteInvoices}"  HorizontalAlignment="Right" Content="Удалить" Padding="10,0" Margin="5" />
+							<Button Command="{Binding QuickbookExportInvoices}"  HorizontalAlignment="Right" Content="Экспорт в QuickBooks" Padding="10,0" Margin="5" />
+						</StackPanel>
+
+						<DataGrid CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="1" ItemsSource="{Binding Invoices}" AutoGenerateColumns="False" >
+							<DataGrid.Columns>
+								<DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Рекламодатель" Binding="{Binding CustomerName}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Номер газеты" Binding="{Binding NewspaperNumber}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Страница" Binding="{Binding PageNumber}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding Price, StringFormat=N2}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Дата создания счета" Binding="{Binding Created}" />
+							</DataGrid.Columns>
+						</DataGrid>
+
+					</Grid>
+				</TabItem>
 
 
 

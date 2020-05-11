@@ -9,9 +9,6 @@ namespace VitalConnection.AAL.Builder.QuickBook
 	class QuickBookInvoice
 	{
 		public string CustomerName { get; set; }
-		public int NewspaperNumber { get; set; }
-		public string ItemName => "Ad & Life #" + (NewspaperNumber > 9 ? "" : " ") + NewspaperNumber.ToString();
-		public string Description => ItemName;
-		public decimal Price { get; set; }
+		public List<QuickBookInvoiceItem> Items { get; } = new List<QuickBookInvoiceItem>();
 	}
 }

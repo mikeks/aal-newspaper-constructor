@@ -54,7 +54,7 @@
 		<!--<ComboBox Grid.Column="1" Grid.Row="3" IsTextSearchEnabled="True" VerticalAlignment="Center" SelectedItem="{Binding Path=Ad.Advertizer, Mode=TwoWay}" ItemsSource="{Binding Path=AllAdvertisers}"  Height="20" />-->
 
 		<TextBlock FontSize="16" Grid.Row="4" VerticalAlignment="Center" Text="Цена" />
-		<TextBox Grid.Row="4" Grid.Column="1" Height="24" Width="100" HorizontalAlignment="Left" MaxLength="6" Text="{Binding Ad.Price, Mode=TwoWay}" />
+		<TextBox Grid.Row="4" Grid.Column="1" Height="24" Width="100" HorizontalAlignment="Left" MaxLength="6" Text="{Binding Ad.Price, Mode=TwoWay, StringFormat=N2}" />
 
 		<Button Grid.Row="5" Margin="0,15,5,0" Content="Сохранить" Command="{Binding SaveCommand}" Click="Button_Click" />
         <Button Grid.Row="5" Grid.Column="1" Margin="5,15,0,0" Content="Отменить" Click="Button_Click" />
