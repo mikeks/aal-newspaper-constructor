@@ -166,14 +166,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
             }
         }
 
-        public IEnumerable<Advertizer> AllAdvertizers
-        {
-            get
-            {
-                return Advertizer.All;
-            }
-        }
-        
+        public IEnumerable<Advertizer> AllAdvertisers => Advertizer.All;
 
 
         public ICommand SelectNewFileCommand

@@ -11,9 +11,9 @@ namespace VitalConnection.AAL.Builder
 	class Utility
 	{
 
-        public static object ConvertDbNull(object x)
+        public static object ConvertDbNull(object x, object defalutValue = null)
         {
-            return x is DBNull ? null : x;
+            return x is DBNull ? defalutValue : x;
         }
 
 		public static string ConvertFilePath(string ph)

@@ -16,6 +16,7 @@ namespace VitalConnection.AAL.Builder.Model
         public Advertizer Advertizer { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
+        public decimal Price { get; set; }
 
         public GridType Grid { get; set; }
 
@@ -28,17 +29,18 @@ namespace VitalConnection.AAL.Builder.Model
 
         public AdModule()
         {
-            Advertizer = Advertizer.All.FirstOrDefault();
+            //Advertizer = Advertizer.All.FirstOrDefault();
         }
 
         public void ReadFromDb(SqlDataReader rdr)
         {
             Id = (int)rdr["Id"];
             FullPath = (string)rdr["FileName"];
-            var advertId = (int)rdr["AdvertizerId"];
-            Advertizer = Advertizer.GetById(advertId);
+            var advertId = (int?)Utility.ConvertDbNull(rdr["AdvertizerId"]);
+            if (advertId.HasValue) Advertizer = Advertizer.GetById(advertId.Value);
             Width = (short)rdr["Width"];
             Height = (short)rdr["Height"];
+            Price = (decimal)Utility.ConvertDbNull(rdr["Price"], (decimal)0);
             Grid = GridType.GetGridType((GridIdEnum)(int)rdr["GridId"]);
         }
 
@@ -73,7 +75,8 @@ namespace VitalConnection.AAL.Builder.Model
                 cmd.Parameters.AddWithValue("@width", Width);
                 cmd.Parameters.AddWithValue("@height", Height);
                 cmd.Parameters.AddWithValue("@gridId", Grid.Id);
-                cmd.Parameters.AddWithValue("@AdvertizerId", Advertizer.Id);
+                if (Advertizer != null) cmd.Parameters.AddWithValue("@advertizerId", Advertizer.Id);
+                cmd.Parameters.AddWithValue("@price", Price);
             });
         }
 

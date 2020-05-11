@@ -12,6 +12,9 @@
 				<MenuItem Header="Новый выпуск газеты..." Command="{Binding NewIssueCommand}" />
 				<MenuItem Header="Новый рекламный блок..." Command="{Binding NewAdModuleCommand}" />
 				<MenuItem Header="Экспорт в InDesign..." Command="{Binding BuildIssueCommand}" />
+				<MenuItem Header="Quick Books">
+					<MenuItem Header="Импорт работодателей..." Command="{Binding QuickBookImportCustomers}" />
+				</MenuItem>
 				<Separator />
 				<MenuItem Header="О программе..." Command="{Binding AboutCommand}" />
                 <MenuItem Header="Синхронизировать Classified с сайтом..." Command="{Binding SyncClassifiedCommand}" />
@@ -77,7 +80,7 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <CheckBox Content="Рекламодатель" IsChecked="{Binding IsAdModuleAdvertizerFilterOn}" VerticalAlignment="Center" Margin="0,3,10,3" />
-                                <ComboBox Grid.Column="1" VerticalAlignment="Center" SelectedItem="{Binding AdModuleAdvertizerFilter, Mode=TwoWay}" ItemsSource="{Binding AllAdvertizers}"  />
+                                <ComboBox Grid.Column="1" VerticalAlignment="Center" SelectedItem="{Binding AdModuleAdvertizerFilter, Mode=TwoWay}" ItemsSource="{Binding AllAdvertisers}"  />
                                 <CheckBox VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2" IsChecked="{Binding IsAdModuleMustFitThePage}" Content="Подходящие для страницы" Margin="0,3,10,3" />
                                 <CheckBox Grid.Row="2" Content="Поиск" IsChecked="{Binding IsAdModuleTextFilterOn}" />
                                 <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding FilterString, UpdateSourceTrigger=PropertyChanged}" />
@@ -103,10 +106,7 @@
 									<TextBlock Text="{Binding AdModuleName}" FontSize="20" />
 									<TextBlock Text="{Binding AdModuleSize}" />
 									<TextBlock Text="{Binding AdModuleAdvertiserName}" />
-									<TextBlock Text="{Binding AdModuleAdvertiserContactName}" />
-									<TextBlock Text="{Binding AdModuleAdvertiserPhone}" />
-									<TextBlock Text="{Binding AdModuleAdvertiserFax}" />
-									<TextBlock Text="{Binding AdModuleAdvertiserEmail}" />
+									<TextBlock Text="{Binding AdModulePrice}" />
 								</StackPanel>
 								<StackPanel Orientation="Vertical" Grid.Column="2" Margin="20,0,0,0">
 									<Button Visibility="{Binding AddToPageCommandVisibility}" HorizontalAlignment="Left" Command="{Binding AddToPageCommand}" Width="150" Content="Добавить на страницу" Height="30" Margin="0,5" />
@@ -246,26 +246,33 @@
 				</TabItem>
 
 
-				<TabItem Header="Рекламодатели">
+				<TabItem Header="Рекламы">
 					<Grid>
 						<Grid.RowDefinitions>
 							<RowDefinition Height="40"/>
 							<RowDefinition/>
 						</Grid.RowDefinitions>
-						<Button Command="{Binding NewAdvertizerCommand}" Content="Новый рекламодатель" HorizontalAlignment="Right" Padding="10,0" Margin="0,5,0,5" />
 
-						<DataGrid Name="AdvertizersGrid" IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding AllAdvertizers}" SelectedItem="{Binding SelectedAdvertizer}" AutoGenerateColumns="False" >
+						<CheckBox Content="Выделить все" Margin="10" IsChecked="{Binding SelectAllAdModules}" />
+						<Button Command="{Binding QuickbookExportInvoices}"  Width="200" HorizontalAlignment="Right" Content="Выставить счета в QuickBooks" Padding="10,0" Margin="5" />
+
+						<DataGrid CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="1" ItemsSource="{Binding IssueAdModules}" SelectedItem="{Binding SelectedAdModuleOnPage}" AutoGenerateColumns="False" >
 
 							<DataGrid.InputBindings>
-								<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=OpenAdvertizerCommand}" CommandParameter="{Binding ElementName=AdvertizersGrid, Path=SelectedItem}" />
+								<MouseBinding MouseAction="LeftDoubleClick" Command="{Binding Path=EditAdModuleCommand}" />
 							</DataGrid.InputBindings>
 
 							<DataGrid.Columns>
-								<DataGridTextColumn Width="*" Header="Название" Binding="{Binding Name}" />
-								<DataGridTextColumn Width="*" Header="Контактное лицо" Binding="{Binding ContactName}" />
-								<DataGridTextColumn Width="*" Header="Телефон" Binding="{Binding Phone}" />
-								<DataGridTextColumn Width="*" Header="Факс" Binding="{Binding Fax}" />
-								<DataGridTextColumn Width="*" Header="Email" Binding="{Binding Email}" />
+								<DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" >
+									<DataGridCheckBoxColumn.CellStyle>
+										<Style TargetType="DataGridCell">
+											<Setter Property="IsEnabled" Value="{Binding CanSelect}" />
+										</Style>
+									</DataGridCheckBoxColumn.CellStyle>
+								</DataGridCheckBoxColumn>
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Страница" Binding="{Binding Page.Number}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Рекламодатель" Binding="{Binding AdModule.Advertizer.Name}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding AdModule.Price}" />
 							</DataGrid.Columns>
 						</DataGrid>
 
@@ -273,11 +280,16 @@
 				</TabItem>
 
 
+
+
 			</TabControl>
 
-
-            <Border Visibility="{Binding VisibilityServerProblems}" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" BorderBrush="Red" BorderThickness="1">
+			<Border d:IsHidden="true" Visibility="{Binding VisibilityServerProblems}" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" BorderBrush="Red" BorderThickness="1">
 				<TextBlock  Text="Возникли проблемы соединения с сервером." Foreground="Red" FontSize="16" Margin="30" />
+			</Border>
+
+			<Border d:IsHidden="true" Visibility="{Binding VisibilityQuickBookConnect}" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Background="White" BorderBrush="Blue" BorderThickness="1">
+				<TextBlock  Text="Идет соединение с QuickBooks..." Foreground="Blue" FontSize="16" Margin="30" />
 			</Border>
 
 		</Grid>

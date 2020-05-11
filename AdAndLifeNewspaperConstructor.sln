@@ -1,22 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdAndLifeNewspaperConstructor", "AdAndLifeNewspaperConstructor\AdAndLifeNewspaperConstructor.csproj", "{A6E6E2F5-5435-4F02-A202-839F9A3A9221}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Debug|x86.ActiveCfg = Debug|x86
+		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Debug|x86.Build.0 = Debug|x86
 		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Release|x86.ActiveCfg = Release|x86
+		{A6E6E2F5-5435-4F02-A202-839F9A3A9221}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0C095D1-BA62-4313-A7A0-FF83EA5B6108}
 	EndGlobalSection
 EndGlobal
