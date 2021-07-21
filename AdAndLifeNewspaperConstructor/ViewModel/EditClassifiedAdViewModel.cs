@@ -115,7 +115,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		public ICommand AddSMCommand => new DelegateCommand<Window>((w) => {
 			w.Close();
-			new NewSMWindow().ShowDialog();
+			new NewSMWindow() { Owner = Application.Current.MainWindow }.ShowDialog();
 		});
 
 		public ICommand RemoveSMCommand => new DelegateCommand<Window>((w) => {

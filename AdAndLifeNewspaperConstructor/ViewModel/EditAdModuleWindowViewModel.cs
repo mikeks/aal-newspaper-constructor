@@ -186,6 +186,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
         public ICommand FindAdvertiserCommand => new DelegateCommand(() =>
         {
             var w = new FindAdvertiserWindow();
+            w.Owner = Application.Current.MainWindow;
             var r = w.ShowDialog();
             if (r == true)
             {

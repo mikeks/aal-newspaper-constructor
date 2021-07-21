@@ -510,8 +510,10 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				return new DelegateCommand(() =>
 				{
 					if (SelectedAdModule == null) return;
-					var w = new EditAdModuleWindow(SelectedAdModule);
-					w.ShowDialog();
+					new EditAdModuleWindow(SelectedAdModule)
+					{
+						Owner = Application.Current.MainWindow
+					}.ShowDialog();
 				});
 			}
 		}
@@ -871,9 +873,11 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		private void ShowEditClassifiedAdWindow(ClassifiedAd ad)
 		{
-			var w = new EditClassifiedAdWindow();
-			w.DataContext = new EditClassifiedAdViewModel(ad);
-			w.ShowDialog();
+			new EditClassifiedAdWindow
+			{
+				DataContext = new EditClassifiedAdViewModel(ad),
+				Owner = Application.Current.MainWindow
+			}.ShowDialog();
 		}
 
 
@@ -913,8 +917,11 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		private void ShowEditAdvertizerWindow(Advertizer a)
 		{
-			var w = new EditAdvertizerWindow();
-			w.DataContext = new EditAdvertizerViewModel(a);
+			var w = new EditAdvertizerWindow
+			{
+				DataContext = new EditAdvertizerViewModel(a),
+				Owner = Application.Current.MainWindow
+			};
 			w.ShowDialog();
 		}
 
@@ -937,8 +944,10 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				{
 					try
 					{
-						var w = new EditAdModuleWindow(new AdModule() { Grid = CurrentPage?.Grid });
-						w.ShowDialog();
+						new EditAdModuleWindow(new AdModule() { Grid = CurrentPage?.Grid })
+						{
+							Owner = Application.Current.MainWindow
+						}.ShowDialog();
 					}
 					catch
 					{
@@ -953,7 +962,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			{
 				return new DelegateCommand(() =>
 				{
-					new NewIssueWindow().ShowDialog();
+					new NewIssueWindow() { Owner = Application.Current.MainWindow }.ShowDialog();
 				});
 			}
 		}
@@ -1136,7 +1145,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			{
 				return new DelegateCommand(() =>
 				{
-					new AboutWindow().ShowDialog();
+					new AboutWindow() { Owner = Application.Current.MainWindow }.ShowDialog();
 				});
 			}
 		}
@@ -1161,13 +1170,13 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		public ICommand NewArticleCommand => new DelegateCommand(() =>
 		{
-			new EditArticleWindow(new NewspaperArticle(CurrentIssue.Year, CurrentIssue.Number)).ShowDialog();
+			new EditArticleWindow(new NewspaperArticle(CurrentIssue.Year, CurrentIssue.Number)) { Owner = Application.Current.MainWindow }.ShowDialog();
 		});
 
 		public ICommand OpenArticleCommand => new DelegateCommand(() =>
 		{
 			if (SelectedArticle == null) return;
-			new EditArticleWindow(SelectedArticle).ShowDialog();
+			new EditArticleWindow(SelectedArticle) { Owner = Application.Current.MainWindow }.ShowDialog();
 		});
 
 		public ICommand DeleteArticleCommand => new DelegateCommand(() =>
