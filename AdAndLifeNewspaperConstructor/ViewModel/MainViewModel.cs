@@ -1028,7 +1028,48 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			MessageBox.Show("Готово!", "Быстро получилось, да?", MessageBoxButton.OK, MessageBoxImage.Information);
 		});
 
+
+		public ICommand CalculateSums => new DelegateCommand(() =>
+		{
+			Dictionary<int, decimal> prices = new Dictionary<int, decimal>();
+
+			foreach (var invoice in Invoice.All)
+			{
+				if (prices.ContainsKey(invoice.NewspaperNumber))
+				{
+					prices[invoice.NewspaperNumber] += invoice.Price;
+				}
+				else
+				{
+					prices.Add(invoice.NewspaperNumber, invoice.Price);
+				}
+			}
+
+			string s = "";
+			foreach (var price in prices.OrderBy((x) => x.Key))
+			{
+				s += $"Сумма за №{price.Key}: ${price.Value:0.00}. \r\n";
+			}
+
+			MessageBox.Show(s, "Суммы", MessageBoxButton.OK, MessageBoxImage.Information);
+
+		});
+
 		public ObservableCollection<Invoice> Invoices { get; private set; } = new ObservableCollection<Invoice>(Invoice.All);
+
+		private string statusBarText;
+		public string StatusBarText 
+		{
+			get
+			{
+				return statusBarText;
+			}
+			set
+			{
+				statusBarText = value;
+				RaisePropertyChangedEvent("StatusBarText");
+			}
+		}
 
 		private void ReloadInvoices(bool fromDb)
 		{
@@ -1036,6 +1077,8 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			Invoices = new ObservableCollection<Invoice>(Invoice.All);
 			RaisePropertyChangedEvent("Invoices");
 			RaisePropertyChangedEvent("SelectAllInvoices");
+
+
 		}
 
 		private IEnumerable<Invoice> GetSelectedInvoices()

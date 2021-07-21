@@ -23,7 +23,7 @@
 		</Menu>
 		<StatusBar DockPanel.Dock="Bottom">
 			<StatusBarItem>
-				<TextBlock Name="tbStatusBarText" />
+				<TextBlock Text="{Binding StatusBarText}" />
 			</StatusBarItem>
 		</StatusBar>
 		<Grid>
@@ -290,6 +290,7 @@
 
 						<CheckBox Content="Выделить все" Margin="10" Width="120" HorizontalAlignment="Left" IsChecked="{Binding SelectAllInvoices}" />
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+							<Button Command="{Binding CalculateSums}"  HorizontalAlignment="Right" Content="Посчитать" Padding="10,0" Margin="5" />
 							<Button Command="{Binding DeleteInvoices}"  HorizontalAlignment="Right" Content="Удалить" Padding="10,0" Margin="5" />
 							<Button Command="{Binding QuickbookExportInvoices}"  HorizontalAlignment="Right" Content="Экспорт в QuickBooks" Padding="10,0" Margin="5" />
 						</StackPanel>
