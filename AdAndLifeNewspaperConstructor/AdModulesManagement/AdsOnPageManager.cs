@@ -16,17 +16,17 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 	class AdsOnPageManager
 	{
 
-		private MainViewModel _mvm;
-		private Grid _grid { get; set; }
+		private readonly MainViewModel _mvm;
+		private Grid Grid { get; set; }
 
 		public AdsOnPageManager(MainViewModel mvm, Grid grid)
 		{
 			_mvm = mvm;
-			_grid = grid;
+			this.Grid = grid;
 		}
 
-		private List<Border> _blocks = new List<Border>();
-		private List<AdModuleOnPage> _adModules = new List<AdModuleOnPage>();
+		private readonly List<Border> _blocks = new List<Border>();
+		private readonly List<AdModuleOnPage> _adModules = new List<AdModuleOnPage>();
 		private MoveAdModuleMode _moveMode;
 		private AdModuleOnPage _selectedAdModule;
 
@@ -48,7 +48,7 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 
         private void SetStatus(string status)
 		{
-			_mvm.Status = status;
+			_mvm.StatusBarText = status;
 		}
 
 		private NewspaperPage CurrentPage
@@ -61,7 +61,7 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 
 		public async Task RefreshAdModulesOnPage()
 		{
-			SetStatus("Loading images...");
+			SetStatus("Загружаем картинки...");
 
 			foreach (var m in CurrentPage.AdModules)
 			{
@@ -81,11 +81,13 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 				{
 					b.Background = new SolidColorBrush(Color.FromRgb(170, 239, 228));
 
-					var lb = new Label();
-					lb.Content = System.IO.Path.GetFileName(ph);
-					lb.HorizontalAlignment = HorizontalAlignment.Center;
-					lb.VerticalAlignment = VerticalAlignment.Center;
-					lb.FontSize = 16;
+					var lb = new Label
+					{
+						Content = System.IO.Path.GetFileName(ph),
+						HorizontalAlignment = HorizontalAlignment.Center,
+						VerticalAlignment = VerticalAlignment.Center,
+						FontSize = 16
+					};
 					b.Child = lb;
 
 
@@ -93,14 +95,13 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 				}
 				else
 				{
-					var il = new ImageLoader();
-					var imgSrc = await il.LoadImage(ph);
-
-					var img = new Image();
-					img.Source = imgSrc;
-					img.Stretch = Stretch.Fill;
-
-					b.Child = img;
+					SetStatus("Загружаем: " + ph);
+					var imgSrc = await ImageLoader.LoadImage(ph);
+					b.Child = new Image
+					{
+						Source = imgSrc,
+						Stretch = Stretch.Fill
+					};
 				}
 
 
@@ -109,7 +110,7 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 				b.Tag = m;
 
 				_blocks.Add(b);
-				_grid.Children.Add(b);
+				Grid.Children.Add(b);
 				_adModules.Add(m);
 
 			}
@@ -121,43 +122,43 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 				if (CurrentPage.AdModules.FirstOrDefault((x) => x.AdModuleId == amp.AdModuleId) == null)
 				{
 					// was removed
-					_grid.Children.Remove(img);
+					Grid.Children.Remove(img);
 					_adModules.Remove(amp);
 				}
 			}
 
-			SetStatus("");
+			SetStatus("Готово");
 
 		}
 
 		public async void RecreateGrid()
 		{
-			_grid.ColumnDefinitions.Clear();
+			Grid.ColumnDefinitions.Clear();
 			for (int x = 0; x < CurrentPage.Grid.ColumnsCount; x++)
 			{
-				_grid.ColumnDefinitions.Add(new ColumnDefinition());
+				Grid.ColumnDefinitions.Add(new ColumnDefinition());
 			}
 
-			_grid.RowDefinitions.Clear();
+			Grid.RowDefinitions.Clear();
 			for (int y = 0; y < CurrentPage.Grid.RowCount; y++)
 			{
-				_grid.RowDefinitions.Add(new RowDefinition());
+				Grid.RowDefinitions.Add(new RowDefinition());
 			}
 
-			_grid.Children.Clear();
+			Grid.Children.Clear();
 
 			for (int y = 0; y < CurrentPage.Grid.RowCount; y++)
 			{
 				for (int x = 0; x < CurrentPage.Grid.ColumnsCount; x++)
 				{
-					var r = new Rectangle(); //Border();
-											 //r.Fill = new RadialGradientBrush(Colors.Red, Colors.Blue);
-					r.Fill = new SolidColorBrush(Colors.Gray);
-					r.Margin = new Thickness(2);
-					//r.BorderThickness = new Thickness(1);
+					var r = new Rectangle
+					{
+						Fill = new SolidColorBrush(Colors.Gray),
+						Margin = new Thickness(2)
+					}; 
 					Grid.SetColumn(r, x);
 					Grid.SetRow(r, y);
-					_grid.Children.Add(r);
+					Grid.Children.Add(r);
 				}
 			}
 
@@ -176,14 +177,14 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
 
 				_moveMode = new MoveAdModuleMode(new MoveAdModuleMode.SelectionContext()
 				{
-					Grid = _grid,
+					Grid = Grid,
 					//StatusBarText = _win.tbStatusBarText,
 					CurrentBlock = brd,
 					StartMousePosition = mousePos,
 					Blocks = _blocks.ToArray(),
                     Page = CurrentPage
 				});
-				_moveMode.OnDone += _imageSelectionMode_OnDone;
+				_moveMode.OnDone += ImageSelectionMode_OnDone;
 
                 
 
@@ -212,11 +213,11 @@ namespace VitalConnection.AAL.Builder.AdModulesManagement
             var brd = (Border)sender;
             var adModule = brd.Tag as AdModuleOnPage;
             SelectAdModule(adModule);
-            var p = e.GetPosition(_grid);
+            var p = e.GetPosition(Grid);
             StartMoveMode(brd, p);
         }
 
-        private void _imageSelectionMode_OnDone(MoveAdModuleMode sender)
+        private void ImageSelectionMode_OnDone(MoveAdModuleMode sender)
 		{
 			_moveMode = null;
 		}

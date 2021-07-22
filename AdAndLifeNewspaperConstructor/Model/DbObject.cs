@@ -67,7 +67,7 @@ namespace VitalConnection.AAL.Builder.Model
             }
         }
 
-        private static void _exec(string storedProcName, Action<SqlCommand> addParAction, CommandType cmdType)
+        private static void Exec(string storedProcName, Action<SqlCommand> addParAction, CommandType cmdType)
         {
             try
             {
@@ -117,12 +117,12 @@ namespace VitalConnection.AAL.Builder.Model
 
 		public static void ExecStoredProc(string storedProcName, Action<SqlCommand> addParAction)
         {
-            _exec(storedProcName, addParAction, CommandType.StoredProcedure);
+            Exec(storedProcName, addParAction, CommandType.StoredProcedure);
         }
 
         protected static void ExecSQL(string storedProcName, Action<SqlCommand> addParAction = null)
         {
-            _exec(storedProcName, addParAction, CommandType.Text);
+            Exec(storedProcName, addParAction, CommandType.Text);
         }
 
         protected static T[] ReadCollectionFromDb<T>(string sql) where T : IDbObject, new()

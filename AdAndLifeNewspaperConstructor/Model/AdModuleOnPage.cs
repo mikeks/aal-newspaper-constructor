@@ -46,13 +46,15 @@ namespace VitalConnection.AAL.Builder.Model
 			var am = page.AdModules.FirstOrDefault((x) => x.AdModuleId == adModule.Id);
 			if (am != null) return am; // already added
 
-			var a = new AdModuleOnPage();
-			a.AdModule = adModule;
-			a.AdModuleId = adModule.Id;
-			a.PageId = page.Id;
-			a.Page = page;
-			a.X = 1;
-			a.Y = 1;
+			var a = new AdModuleOnPage
+			{
+				AdModule = adModule,
+				AdModuleId = adModule.Id,
+				PageId = page.Id,
+				Page = page,
+				X = 1,
+				Y = 1
+			};
 			page.AdModules.Add(a);
 			a.SaveNew();
 			return a;

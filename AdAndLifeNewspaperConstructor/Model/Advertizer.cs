@@ -37,9 +37,8 @@ namespace VitalConnection.AAL.Builder.Model
         public static Advertizer GetById(int id)
         {
             if (_all == null) Load();
-            Advertizer a;
-            _all.TryGetValue(id, out a);
-            return a;
+			_all.TryGetValue(id, out Advertizer a);
+			return a;
         }
 
         private static void Load()

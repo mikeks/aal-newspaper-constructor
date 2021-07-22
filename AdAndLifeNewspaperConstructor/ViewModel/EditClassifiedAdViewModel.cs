@@ -12,7 +12,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 	class EditClassifiedAdViewModel : ObservableObject
 	{
 
-		private ClassifiedAd _ad;
+		private readonly ClassifiedAd _ad;
 
 		public ClassifiedAd Ad
 		{
@@ -33,10 +33,12 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 			_allIssues = lst;
 
-			lst = new List<int>();
-			lst.Add(DateTime.Now.Year - 1);
-			lst.Add(DateTime.Now.Year);
-			lst.Add(DateTime.Now.Year + 1);
+			lst = new List<int>
+			{
+				DateTime.Now.Year - 1,
+				DateTime.Now.Year,
+				DateTime.Now.Year + 1
+			};
 			_allYears = lst;
 		}
 
@@ -128,7 +130,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			//RaisePropertyChangedEvent("AllSM");
 		});
 
-		private IEnumerable<int> _allIssues;
+		private readonly IEnumerable<int> _allIssues;
 		public IEnumerable<int> AllIssues
 		{
 			get
@@ -137,7 +139,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 		}
 
-		private IEnumerable<int> _allYears;
+		private readonly IEnumerable<int> _allYears;
 		public IEnumerable<int> AllYears
 		{
 			get

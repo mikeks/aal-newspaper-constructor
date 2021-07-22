@@ -18,14 +18,15 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
         private string ShowSelectImageFileDialog()
         {
-            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+			Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog
+			{
+				// Set filter for file extension and default file extension 
+				DefaultExt = ".jpg",
+				Filter = "Файлы картинок или pdf|*.jpeg;*.jpg;*.png;*.gif;*.pdf|Все файлы|*.*"
+			};
 
-            // Set filter for file extension and default file extension 
-            dlg.DefaultExt = ".jpg";
-            dlg.Filter = "Файлы картинок или pdf|*.jpeg;*.jpg;*.png;*.gif;*.pdf|Все файлы|*.*";
-
-            // Display OpenFileDialog by calling ShowDialog method 
-            bool? result = dlg.ShowDialog();
+			// Display OpenFileDialog by calling ShowDialog method 
+			bool? result = dlg.ShowDialog();
 
             if (result != true || dlg.FileName == null) return null;
 
@@ -94,7 +95,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
             if (Ad.FullPath != null)
             {
-                Image = await new ImageLoader().LoadImage(Utility.ConvertFilePath(Ad.FullPath));
+                Image = await ImageLoader.LoadImage(Utility.ConvertFilePath(Ad.FullPath));
             } else
             {
                 await SelectNewFile();
@@ -141,7 +142,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 			else
 			{
-				var img = await new ImageLoader().LoadImage(imgFn, false);
+				var img = await ImageLoader.LoadImage(imgFn, false);
 				if (img == null)
 				{
 					MessageBox.Show("Не удалось загрузить изображение.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -185,9 +186,11 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
         public ICommand FindAdvertiserCommand => new DelegateCommand(() =>
         {
-            var w = new FindAdvertiserWindow();
-            w.Owner = Application.Current.MainWindow;
-            var r = w.ShowDialog();
+			var w = new FindAdvertiserWindow
+			{
+				Owner = Application.Current.MainWindow
+			};
+			var r = w.ShowDialog();
             if (r == true)
             {
                 Ad.Advertiser = (w.DataContext as FindAdvertiserViewModel).SelectedAdvertiser;

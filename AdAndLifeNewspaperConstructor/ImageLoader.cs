@@ -7,17 +7,19 @@ using System.Windows.Media.Imaging;
 
 namespace VitalConnection.AAL.Builder
 {
-	class ImageLoader
+	static class ImageLoader
 	{
 
-		private Task<BitmapImage> LoadImage(Uri imageUri)
+		private static Task<BitmapImage> LoadImage(Uri imageUri)
 		{
 			return Task.Run(() =>
 			{
 				try
 				{
-					var bitmapImage = new BitmapImage();
-					bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+					var bitmapImage = new BitmapImage
+					{
+						CacheOption = BitmapCacheOption.OnLoad
+					};
 					bitmapImage.BeginInit();
 					bitmapImage.UriSource = imageUri;
 					bitmapImage.EndInit();
@@ -31,7 +33,7 @@ namespace VitalConnection.AAL.Builder
 			});
 		}
 
-		public async Task<BitmapImage> LoadImage(string path, bool useNotFoundImage = true)
+		public async static Task<BitmapImage> LoadImage(string path, bool useNotFoundImage = true)
 		{
             BitmapImage imgSrc = null;
             if (!string.IsNullOrWhiteSpace(path))

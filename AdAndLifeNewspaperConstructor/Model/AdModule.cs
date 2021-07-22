@@ -105,8 +105,7 @@ namespace VitalConnection.AAL.Builder.Model
         public static AdModule GetAdModule(int id)
 		{
 			if (_all == null) Load();
-			AdModule m;
-			if (!_adModuleDictionary.TryGetValue(id, out m)) return null;
+			if (!_adModuleDictionary.TryGetValue(id, out AdModule m)) return null;
 			return m;
 		}
 

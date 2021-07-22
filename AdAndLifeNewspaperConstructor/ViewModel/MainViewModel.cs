@@ -24,8 +24,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		private StackPanel PageSelectionStackPanel { get; set; }
 
-
-		AdsOnPageManager _pageLayout;
+		readonly AdsOnPageManager _pageLayout;
 
 		private static MainViewModel _instance;
 		public static MainViewModel Instance
@@ -283,8 +282,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 			Task.Run(async () =>
 			{
-				var il = new ImageLoader();
-				_selectedImage = await il.LoadImage(ph);
+				_selectedImage = await ImageLoader.LoadImage(ph);
 				_selectedImagePath = ph;
 				Application.Current.Dispatcher.Invoke(() =>
 				{
@@ -532,20 +530,20 @@ namespace VitalConnection.AAL.Builder.ViewModel
 		//}
 
 
-		string _status;
-		public string Status
-		{
-			get
-			{
-				return _status;
-			}
+		//string _status;
+		//public string Status
+		//{
+		//	get
+		//	{
+		//		return _status;
+		//	}
 
-			set
-			{
-				_status = value;
-				RaisePropertyChangedEvent("Status");
-			}
-		}
+		//	set
+		//	{
+		//		_status = value;
+		//		RaisePropertyChangedEvent("Status");
+		//	}
+		//}
 
 
 
@@ -560,11 +558,13 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 			foreach (var p in CurrentIssue.Pages)
 			{
-				var b = new Button();
-				b.Content = p;
+				var b = new Button
+				{
+					Content = p,
+					Padding = new Thickness(10, 0, 10, 0)
+				};
 				_defaultButtonBorderBrush = b.BorderBrush;
 				//b.BorderThickness = new Thickness(2);
-				b.Padding = new Thickness(10, 0, 10, 0);
 				b.Click += OnPageSelected;
 
 				var m = new ContextMenu();
@@ -837,8 +837,10 @@ namespace VitalConnection.AAL.Builder.ViewModel
 		{
 			get
 			{
-				var l = new List<ClassifiedRubric>();
-				l.Add(AllRubricsEntity);
+				var l = new List<ClassifiedRubric>
+				{
+					AllRubricsEntity
+				};
 				l.AddRange(ClassifiedRubric.All);
 				return l;
 			}
@@ -915,15 +917,15 @@ namespace VitalConnection.AAL.Builder.ViewModel
 		public Visibility DeleteClassifiedAdVisibility => SelectedClassifiedAd == null ? Visibility.Collapsed : Visibility.Visible;
 
 
-		private void ShowEditAdvertizerWindow(Advertizer a)
-		{
-			var w = new EditAdvertizerWindow
-			{
-				DataContext = new EditAdvertizerViewModel(a),
-				Owner = Application.Current.MainWindow
-			};
-			w.ShowDialog();
-		}
+		//private void ShowEditAdvertizerWindow(Advertizer a)
+		//{
+		//	var w = new EditAdvertizerWindow
+		//	{
+		//		DataContext = new EditAdvertizerViewModel(a),
+		//		Owner = Application.Current.MainWindow
+		//	};
+		//	w.ShowDialog();
+		//}
 
 		//public ICommand NewAdvertizerCommand
 		//{
