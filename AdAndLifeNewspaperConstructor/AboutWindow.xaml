@@ -7,12 +7,12 @@
         mc:Ignorable="d"
         Title="О программе..." Height="223.078" Width="453.077" WindowStyle="ToolWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <StackPanel Margin="10">
-        <TextBlock Text="Программа-Компоновщик материалов газеты" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,15" />
+        <TextBlock Text="Конструктор Газеты" FontSize="16" TextWrapping="Wrap" Margin="0,0,0,15" />
 
-        <TextBlock Text="Автор Михаил Кескинов" FontSize="13" Margin="0,0,0,15" />
+        <TextBlock Text="Автор Mike Keskinov" FontSize="13" Margin="0,0,0,15" />
         <TextBlock Text="Разработано специально для газеты &quot;Реклама и Жизнь&quot;" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,15" />
         <TextBlock Name="tbVersion" Text="Версия науке неизвестная" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="13" />
-        <TextBlock Text="© Филадельфия, 2017-2021" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="13" />
+        <TextBlock Text="© Филадельфия, 2017-2022" TextWrapping="Wrap" Margin="0,0,0,15" FontSize="13" />
 
         <Button Content="OK" Click="Button_Click" Width="50" HorizontalAlignment="Right" Margin="10" />
 

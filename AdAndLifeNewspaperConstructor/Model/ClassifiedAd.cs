@@ -56,6 +56,8 @@ namespace VitalConnection.AAL.Builder.Model
 		public bool IsPaid { get; set; }
 		public PaymentMethodEnum PaymentMethod { get; set; }
 		public decimal Price { get; set; }
+		public decimal IssuePrice { get; set; }
+
 		public IssueNumber StartIssue { get; set; }
 		public IssueNumber EndIssue { get; set; }
 		public string SM { get; set; }
@@ -110,6 +112,7 @@ namespace VitalConnection.AAL.Builder.Model
 			IsPaid = (bool)rdr["IsPaid"];
 			PaymentMethod = rdr["PaymentMethod"] is DBNull ? PaymentMethodEnum.NotSet : (PaymentMethodEnum)(byte)rdr["PaymentMethod"];
 			Price = (decimal)ResolveDbNull(rdr["Price"], 0m);
+			IssuePrice = (decimal)rdr["IssuePrice"];
 
 			StartIssue = new IssueNumber((int)rdr["StartIssueYear"], (short)rdr["StartIssueNumber"]);
 			EndIssue = new IssueNumber((int)rdr["EndIssueYear"], (short)rdr["EndIssueNumber"]);
@@ -149,6 +152,7 @@ namespace VitalConnection.AAL.Builder.Model
                 cmd.Parameters.AddWithValue("@isPaid", IsPaid);
                 if (PaymentMethod != PaymentMethodEnum.NotSet) cmd.Parameters.AddWithValue("@paymentMethod", PaymentMethod);
                 cmd.Parameters.AddWithValue("@price", Price);
+                cmd.Parameters.AddWithValue("@issuePrice", IssuePrice);
                 cmd.Parameters.AddWithValue("@startIssueNumber", StartIssue.Number);
                 cmd.Parameters.AddWithValue("@startIssueYear", StartIssue.Year);
                 cmd.Parameters.AddWithValue("@endIssueNumber", EndIssue.Number);

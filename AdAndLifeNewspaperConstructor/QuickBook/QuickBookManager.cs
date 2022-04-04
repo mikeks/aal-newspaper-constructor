@@ -22,7 +22,13 @@ namespace VitalConnection.AAL.Builder.QuickBook
 				var qbInv = new QuickBookInvoice() { CustomerName = customer };
 				foreach (var inv in invoices.Where((x) => x.CustomerName == customer))
 				{
-					var itm = new QuickBookInvoiceItem() { NewspaperNumber = inv.NewspaperNumber, Price = inv.Price };
+					var itm = new QuickBookInvoiceItem()
+					{
+						NewspaperNumber = inv.NewspaperNumber,
+						NewspaperYear = inv.NewspaperYear,
+						Price = inv.Price,
+						AdDescription = inv.AdDescription
+					};
 					qbInv.Items.Add(itm);
 				}
 				lst.Add(qbInv);

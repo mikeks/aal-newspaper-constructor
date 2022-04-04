@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VitalConnection.AAL.Builder"
         mc:Ignorable="d" 
-        Title="Реклама и Жизнь" Height="500" Width="700" Loaded="Window_Loaded" WindowState="Maximized">
+        Title="Реклама и Жизнь" Height="500" Width="794" Loaded="Window_Loaded" WindowState="Maximized">
 	<DockPanel>
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="Команды">
@@ -142,7 +142,7 @@
 				<TabItem Header="Объявления">
 					<Grid>
 						<Grid.RowDefinitions>
-							<RowDefinition Height="90"/>
+							<RowDefinition Height="124"/>
 							<RowDefinition/>
 						</Grid.RowDefinitions>
 						<StackPanel>
@@ -151,6 +151,9 @@
 								<ComboBox Grid.Column="2" HorizontalAlignment="Left" SelectedItem="{Binding Path=ClassifiedFilterRubric, Mode=TwoWay}" ItemsSource="{Binding Path=AllRubrics}"  Height="20" Width="200" />
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+								<TextBlock Text="Продавец: " Width="60" />
+								<ComboBox Grid.Column="2" HorizontalAlignment="Left" SelectedItem="{Binding Path=ClassifiedFilterSm, Mode=TwoWay}" ItemsSource="{Binding Path=AllSalesmans}"  Height="20" Width="200" />
+							</StackPanel>							<StackPanel Orientation="Horizontal" Margin="0,5,0,5">
 								<TextBlock Text="Поиск: " Width="60" />
 								<TextBox Width="200" HorizontalAlignment="Left" Text="{Binding ClassifiedFilterString, UpdateSourceTrigger=PropertyChanged}" />
 							</StackPanel>
@@ -163,10 +166,8 @@
 								<Button Command="{Binding DeleteClassifiedAdCommand}" Visibility="{Binding DeleteClassifiedAdVisibility}" Content="Удалить объявление" Padding="10,0" Margin="0,5,10,5" />
 								<Button Command="{Binding NewClassifiedAdCommand}" Content="Новое объявление" Padding="10,0" Margin="0,5,0,5" />
 							</StackPanel>
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-								<TextBlock FontSize="20" Text="Количество:" />
-								<TextBlock FontSize="20" Text="{Binding ClassifiedCount}" />
-							</StackPanel>
+							<TextBlock TextAlignment="Right" FontSize="16" Text="{Binding ClassifiedCount, StringFormat=Количество: {0}}" />
+							<TextBlock TextAlignment="Right" FontSize="16" Text="{Binding ClassifiedPrice, StringFormat=Сумма: ${0:0.##}}" />
 						</StackPanel>
 
 						<DataGrid IsReadOnly="True" Grid.Row="1" ItemsSource="{Binding ClassifiedView}" Name="ClassifiedGrid" SelectedItem="{Binding SelectedClassifiedAd}" AutoGenerateColumns="False" >
@@ -255,7 +256,8 @@
 
 						<CheckBox Width="120" HorizontalAlignment="Left" Content="Выделить все" Margin="10" IsChecked="{Binding SelectAllAdModules}" />
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-							<Button Command="{Binding CreateInvoices}"  Width="200" HorizontalAlignment="Right" Content="Выставить счета" Padding="10,0" Margin="5" />
+							<Button Command="{Binding CreateInvoices}"  Width="200" HorizontalAlignment="Right" Content="Выставить счета на рекламу" Padding="10,0" Margin="5" />
+							<Button Command="{Binding CreateInvoicesClassified}"  Width="210" HorizontalAlignment="Right" Content="Выставить счета для объявлений" Padding="10,0" Margin="5" />
 						</StackPanel>
 
 						<DataGrid CanUserDeleteRows="False" CanUserAddRows="False" Grid.Row="1" ItemsSource="{Binding IssueAdModules}" SelectedItem="{Binding SelectedAdModuleOnPage}" AutoGenerateColumns="False" >
@@ -274,6 +276,7 @@
 								</DataGridCheckBoxColumn>
 								<DataGridTextColumn IsReadOnly="True" Width="120" Header="Страница" Binding="{Binding Page.Number}" />
 								<DataGridTextColumn IsReadOnly="True" Width="400" Header="Рекламодатель" Binding="{Binding AdModule.AdvertiserName}" />
+								<DataGridTextColumn IsReadOnly="True" Width="100" Header="Размер" Binding="{Binding AdSizeDescription}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding AdModule.Price, StringFormat=N2}" />
 							</DataGrid.Columns>
 						</DataGrid>
@@ -284,11 +287,13 @@
 				<TabItem Header="Счета">
 					<Grid>
 						<Grid.RowDefinitions>
-							<RowDefinition Height="40"/>
+							<RowDefinition Height="54"/>
 							<RowDefinition/>
 						</Grid.RowDefinitions>
-
-						<CheckBox Content="Выделить все" Margin="10" Width="120" HorizontalAlignment="Left" IsChecked="{Binding SelectAllInvoices}" />
+						<StackPanel Orientation="Vertical">
+							<CheckBox Content="Выделить все" Margin="10,8,0,0" HorizontalAlignment="Left" IsChecked="{Binding SelectAllInvoices}" />
+							<CheckBox Content="Показать все счета" Margin="10,8,0,0" HorizontalAlignment="Left" IsChecked="{Binding ShowAllInvoices}" />
+						</StackPanel>
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 							<Button Command="{Binding CalculateSums}"  HorizontalAlignment="Right" Content="Посчитать" Padding="10,0" Margin="5" />
 							<Button Command="{Binding DeleteInvoices}"  HorizontalAlignment="Right" Content="Удалить" Padding="10,0" Margin="5" />
@@ -299,6 +304,7 @@
 							<DataGrid.Columns>
 								<DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Рекламодатель" Binding="{Binding CustomerName}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Год газеты" Binding="{Binding NewspaperYear}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Номер газеты" Binding="{Binding NewspaperNumber}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Страница" Binding="{Binding PageNumber}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding Price, StringFormat=N2}" />

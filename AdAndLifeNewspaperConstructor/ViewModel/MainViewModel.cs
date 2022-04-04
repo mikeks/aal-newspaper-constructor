@@ -341,17 +341,32 @@ namespace VitalConnection.AAL.Builder.ViewModel
 		{
 			get
 			{
-				return Invoices.All((x) => x.IsSelected);
+				return Invoices.OfType<Invoice>().All((x) => x.IsSelected);
 			}
 			set
 			{
-				foreach (var m in Invoices)
+				foreach (Invoice m in Invoices)
 				{
 					m.IsSelected = value;
 				}
-				ReloadInvoices(false);
+				RefreshInvoices(false);
 			}
 		}
+
+		bool _showAllInvoices;
+		public bool ShowAllInvoices
+		{
+			get
+			{
+				return _showAllInvoices;
+			}
+			set
+			{
+				_showAllInvoices = value;
+				RefreshInvoices(false);
+			}
+		}
+
 
 		//private void ResetIssueAdModules()
 		//{
@@ -666,6 +681,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				RefreshClassified(false);
 				RefreshArticles();
 				RaisePropertyChangedEvent("IssueAdModules");
+				RefreshInvoices(false);
 
 			}
 		}
@@ -696,7 +712,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				RefreshIssues();
 				RefreshClassified(true);
 				RefreshArticles();
-				ReloadInvoices(true);
+				RefreshInvoices(true);
 			}
 		}
 
@@ -783,6 +799,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				ClassifiedView.Refresh();
 			}
 			RaisePropertyChangedEvent("ClassifiedCount");
+			RaisePropertyChangedEvent("ClassifiedPrice");
 
 		}
 
@@ -811,6 +828,34 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 		}
 
+
+		const string AllSmId = "<Все продавцы>";
+
+		string _classifiedFilterSm = AllSmId;
+		public string ClassifiedFilterSm
+		{
+			get
+			{
+				return _classifiedFilterSm;
+			}
+			set
+			{
+				_classifiedFilterSm = value;
+				RefreshClassified(false);
+			}
+		}
+
+		public IEnumerable<string> AllSalesmans
+		{
+			get
+			{
+				var lst = new List<string>();
+				lst.Add(AllSmId);
+				lst.AddRange(ClassifiedSM.All);
+				return lst;
+			}
+		}
+
 		private bool ClassifiedFilter(object item)
 		{
 			if (CurrentIssue == null) return false;
@@ -824,6 +869,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			{
 				if (!ad.IsInNumber(CurrentIssue.Year, CurrentIssue.Number)) return false;
 			}
+			if (ClassifiedFilterSm != AllSmId && ClassifiedFilterSm != ad.SM) return false;
 			if (string.IsNullOrWhiteSpace(ClassifiedFilterString)) return true;
 			return ad.Advertiser.ToLower().Contains(ClassifiedFilterString.ToLower().Trim());
 		}
@@ -857,6 +903,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 		//}
 
 		public int ClassifiedCount => ClassifiedView.OfType<object>().Count();
+		public decimal ClassifiedPrice => ClassifiedView.OfType<ClassifiedAd>().Sum((x) => x.IssuePrice);
 
 		private ClassifiedAd _selectedClassifiedAd;
 		public ClassifiedAd SelectedClassifiedAd
@@ -1006,6 +1053,55 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			MessageBox.Show("Успешно загружено " + cnt + " рекламодателей.", "Ура, заработало!", MessageBoxButton.OK, MessageBoxImage.Information);
 		});
 
+
+
+		public ICommand CreateInvoicesClassified => new DelegateCommand(() =>
+		{
+			var cadDict = new Dictionary<string, decimal>();
+			foreach (var cad in ClassifiedAd.All)
+			{
+				if (cad.IssuePrice > 0 && cad.IsInNumber(CurrentIssue.Year, CurrentIssue.Number))
+				{
+					var sm = string.IsNullOrWhiteSpace(cad.SM) ? "No SM" : cad.SM;
+					if (cadDict.ContainsKey(sm)) cadDict[sm] += cad.IssuePrice; else cadDict.Add(sm, cad.IssuePrice);
+				}
+			}
+
+			var s = "";
+			foreach (var kvp in cadDict)
+			{
+				s += kvp.Key + ": $" + kvp.Value.ToString("0.##") + "\r\n";
+			}
+
+			if (s == "")
+			{
+				MessageBox.Show("Объявлений с указанной ценой за номер в данном выпуске газеты не обнаружено.");
+				return;
+			}
+
+			s += "Total amount: $" + cadDict.Values.Sum().ToString("0.##");
+
+			if (MessageBox.Show($"Будут созданы счета для Объявлений в газете №{CurrentIssue.Year}.{CurrentIssue.Number}: \r\n\n" + s, "Объявления", MessageBoxButton.OKCancel, MessageBoxImage.Question) == MessageBoxResult.Cancel) return;
+
+			foreach (var kvp in cadDict)
+			{
+				var inv = new Invoice()
+				{
+					CustomerName = "CLASSIFIED. " + kvp.Key,
+					NewspaperNumber = CurrentIssue.Number,
+					NewspaperYear = CurrentIssue.Year,
+					Price = kvp.Value,
+					PageNumber = 0,
+					AdDescription = "Classified ad"
+				};
+				inv.Save();
+			}
+
+			RefreshInvoices(true);
+			MessageBox.Show("Счета за объявления выставлены. Результат можно посмотреть на вкладке Счета.", "Всё уже сделано", MessageBoxButton.OK, MessageBoxImage.Information);
+
+		});
+
 		public ICommand CreateInvoices => new DelegateCommand(() =>
 		{
 			var invoices = new List<Invoice>();
@@ -1016,8 +1112,10 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				{
 					CustomerName = ad.AdModule.Advertiser.Name,
 					NewspaperNumber = CurrentIssue.Number,
+					NewspaperYear = CurrentIssue.Year,
 					Price = ad.AdModule.Price,
-					PageNumber = ad.Page.Number
+					PageNumber = ad.Page.Number,
+					AdDescription = ad.AdSizeDescription
 				};
 				invoices.Add(inv);
 			}
@@ -1035,24 +1133,27 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				invoice.Save();
 			}
 
-			ReloadInvoices(true);
-			MessageBox.Show("Готово!", "Быстро получилось, да?", MessageBoxButton.OK, MessageBoxImage.Information);
+
+			RefreshInvoices(true);
+			MessageBox.Show("Счета за рекламу выставлены. Результат можно посмотреть на вкладке Счета.", "Всё уже сделано", MessageBoxButton.OK, MessageBoxImage.Information);
 		});
 
 
 		public ICommand CalculateSums => new DelegateCommand(() =>
 		{
-			Dictionary<int, decimal> prices = new Dictionary<int, decimal>();
+			var prices = new Dictionary<string, decimal>();
 
 			foreach (var invoice in Invoice.All)
 			{
-				if (prices.ContainsKey(invoice.NewspaperNumber))
+				
+				var k = $"{invoice.NewspaperNumber}.{invoice.NewspaperYear}" + (invoice.CustomerName.StartsWith("CLASSIFIED") ? " CLASSIFIED" : " ADS");
+				if (prices.ContainsKey(k))
 				{
-					prices[invoice.NewspaperNumber] += invoice.Price;
+					prices[k] += invoice.Price;
 				}
 				else
 				{
-					prices.Add(invoice.NewspaperNumber, invoice.Price);
+					prices.Add(k, invoice.Price);
 				}
 			}
 
@@ -1066,7 +1167,10 @@ namespace VitalConnection.AAL.Builder.ViewModel
 
 		});
 
-		public ObservableCollection<Invoice> Invoices { get; private set; } = new ObservableCollection<Invoice>(Invoice.All);
+		//public ObservableCollection<Invoice> Invoices { get; private set; } = new ObservableCollection<Invoice>(Invoice.All);
+		public ICollectionView Invoices { get; private set; }
+
+
 
 		private string statusBarText;
 		public string StatusBarText 
@@ -1082,38 +1186,59 @@ namespace VitalConnection.AAL.Builder.ViewModel
 			}
 		}
 
-		private void ReloadInvoices(bool fromDb)
+		private bool InvoicesFilter(object item)
 		{
-			if (fromDb) Invoice.ReloadAllFromDb();
-			Invoices = new ObservableCollection<Invoice>(Invoice.All);
-			RaisePropertyChangedEvent("Invoices");
-			RaisePropertyChangedEvent("SelectAllInvoices");
-
-
+			if (ShowAllInvoices) return true;
+			// show invoices for this issue only
+			var inv = item as Invoice;
+			return CurrentIssue?.Year == inv?.NewspaperYear && CurrentIssue?.Number == inv?.NewspaperNumber;
 		}
 
-		private IEnumerable<Invoice> GetSelectedInvoices()
+		private void RefreshInvoices(bool fromDb)
 		{
-			var inv = Invoices.Where((x) => x.IsSelected);
-			if (inv.Count() == 0) MessageBox.Show("Счетов не выделено.", "Тут же пусто!", MessageBoxButton.OK, MessageBoxImage.Information);
-			return inv;
+			if (fromDb || Invoices == null)
+			{
+				Invoice.ReloadAllFromDb();
+				Invoices = CollectionViewSource.GetDefaultView(Invoice.All);
+				Invoices.Filter = InvoicesFilter;
+				RaisePropertyChangedEvent("ClassifiedView");
+			}
+			else
+			{
+				Invoices.Refresh();
+			}
+			RaisePropertyChangedEvent("Invoices");
+			RaisePropertyChangedEvent("SelectAllInvoices");
+		}
+
+		private IEnumerable<Invoice> GetSelectedInvoices(bool excludeClassified)
+		{
+			var lst = new List<Invoice>();
+			foreach (Invoice inv in Invoices)
+			{
+				if (excludeClassified && inv.CustomerName.StartsWith("CLASSIFIED")) continue;
+				if (inv.IsSelected) lst.Add(inv);
+			}
+			//var inv = Invoices.Where((x) => x.IsSelected);
+			if (lst.Count == 0) MessageBox.Show("Счетов не выделено.", "Тут же пусто!", MessageBoxButton.OK, MessageBoxImage.Information);
+			return lst;
 		}
 
 		public ICommand DeleteInvoices => new DelegateCommand(() =>
 		{
-			var invs = GetSelectedInvoices();
+			var invs = GetSelectedInvoices(false);
 			if (invs.Count() == 0) return;
 			if (MessageBox.Show($"Вы уверены что хотите удалить счетов в количестве {invs.Count()} шт.?", "Что, правда?", MessageBoxButton.OKCancel, MessageBoxImage.Warning) != MessageBoxResult.OK) return;
 			foreach (var inv in invs)
 			{
 				inv.Delete();
 			}
-			ReloadInvoices(true);
+			RefreshInvoices(true);
 		});
 
 		public ICommand QuickbookExportInvoices => new DelegateCommand(async () =>
 		{
-			var invs = GetSelectedInvoices();
+			var invs = GetSelectedInvoices(true);
 			if (invs.Count() == 0) return;
 
 			if (!QuickBookWarning()) return;

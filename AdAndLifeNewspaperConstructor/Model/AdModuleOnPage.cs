@@ -32,6 +32,32 @@ namespace VitalConnection.AAL.Builder.Model
 
 		public bool CanSelect => AdModule?.Advertiser?.Name != null && AdModule?.Price > 0;
 
+		public string AdSizeDescription
+		{
+			get
+			{
+				switch (Page.Grid.Id)
+				{
+					case GridIdEnum.Main:
+					case GridIdEnum.Last:
+						if (AdModule.Width == 2 && AdModule.Height == 2) return "2x2";
+						if (AdModule.Width == 4 && AdModule.Height == 2) return "1/2";
+						if (AdModule.Width == 2 && AdModule.Height == 4) return "1/2";
+						if (AdModule.Width == 4 && AdModule.Height == 4) return "Full page";
+						if (AdModule.Width == 2 && AdModule.Height == 1) return "1/8";
+						if (AdModule.Width == 1 && AdModule.Height == 2) return "1/8";
+						if (AdModule.Width == 1 && AdModule.Height == 1) return "1/16";
+						return "";
+					case GridIdEnum.First:
+						return (AdModule.Width * AdModule.Height).ToString() + "BC";
+					case GridIdEnum.Classified:
+						return "Classified";
+					default:
+						return "";
+				}
+			}
+		}
+
 		public void ReadFromDb(SqlDataReader rdr)
 		{
 			PageId = (int)rdr["PageId"];

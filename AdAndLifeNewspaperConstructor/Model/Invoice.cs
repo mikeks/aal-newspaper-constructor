@@ -14,8 +14,10 @@ namespace VitalConnection.AAL.Builder.Model
 		//public DateTime Exported { get; private set; }
 		public string CustomerName { get; set; }
 		public int NewspaperNumber { get; set; }
+		public int NewspaperYear { get; set; }
 		public int PageNumber { get; set; }
 		public decimal Price { get; set; }
+		public string AdDescription { get; set; }
 
 		public bool IsSelected { get; set; }
 
@@ -24,9 +26,11 @@ namespace VitalConnection.AAL.Builder.Model
 			Id = (int)rdr["Id"];
 			CustomerName = (string)rdr["CustomerName"];
 			NewspaperNumber = (short)rdr["NewspaperNumber"];
+			NewspaperYear = (int)rdr["NewspaperYear"];
 			Price = (decimal)rdr["Price"];
 			PageNumber = (int)rdr["PageNumber"];
 			Created = (DateTime)rdr["Created"];
+			AdDescription = (string)rdr["AdDescription"];
 			//Exported = (DateTime)rdr["Exported"];
 		}
 
@@ -36,8 +40,10 @@ namespace VitalConnection.AAL.Builder.Model
 			{
 				cmd.Parameters.AddWithValue("@customerName", CustomerName);
 				cmd.Parameters.AddWithValue("@newspaperNumber", NewspaperNumber);
+				cmd.Parameters.AddWithValue("@newspaperYear", NewspaperYear);
 				cmd.Parameters.AddWithValue("@price", Price);
 				cmd.Parameters.AddWithValue("@pageNumber", PageNumber);
+				cmd.Parameters.AddWithValue("@adDescription", AdDescription);
 			});
 		}
 
