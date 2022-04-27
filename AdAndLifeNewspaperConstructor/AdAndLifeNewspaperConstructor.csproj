@@ -94,8 +94,8 @@
     <Reference Include="DocumentFormat.OpenXml">
       <HintPath>libs\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.11.16.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <HintPath>..\packages\HtmlAgilityPack.1.11.16\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.11.42.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.42\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="HtmlToOpenXml">
       <HintPath>libs\HtmlToOpenXml.dll</HintPath>
@@ -285,7 +285,6 @@
     <None Include="AALDataSet.xss">
       <DependentUpon>AALDataSet.xsd</DependentUpon>
     </None>
-    <None Include="AdAndLifeNewspaperConstructor_TemporaryKey.pfx" />
     <Resource Include="Fatcow-Farm-Fresh-Newspaper.ico" />
     <None Include="ArticlePreview\ArticleTemplate.htm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -356,7 +355,7 @@
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="InDesign">
-      <Guid>{38E74CB3-2251-472E-A9C3-922526043955}</Guid>
+      <Guid>{274E835E-7501-4BB0-A2CE-A4BDB5231D29}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
       <Lcid>0</Lcid>
@@ -374,7 +373,9 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
