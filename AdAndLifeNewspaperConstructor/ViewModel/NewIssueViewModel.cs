@@ -20,19 +20,35 @@ namespace VitalConnection.AAL.Builder.ViewModel
             {
                 Number = iss.Number + 1;
                 Year = iss.Year;
-                //PageCount = iss.Pages.Length;
+                PageCount = iss.Pages.Length;
+                var classFirst = 0;
+                var classLast = 0;
+				foreach (var p in iss.Pages)
+				{
+                    if (p.Grid.IsForClassified) {
+                        if (classFirst == 0) classFirst = p.Number;
+                        if (p.Number > classLast) classLast = p.Number;
+                    }
+				}
+                ClassifiedFrom = classFirst;
+                ClassifiedTo = classLast;
             }
 
             RaisePropertyChangedEvent("Year");
             RaisePropertyChangedEvent("Number");
-            //RaisePropertyChangedEvent("PageCount");
+            RaisePropertyChangedEvent("PageCount");
+            RaisePropertyChangedEvent("ClassifiedFrom");
+            RaisePropertyChangedEvent("ClassifiedTo");
 
         }
 
 
         public int Year { get; set; }
         public int Number { get; set; }
-       // public int PageCount { get; set; }
+        
+        public int PageCount { get; set; }
+        public int ClassifiedFrom { get; set; }
+        public int ClassifiedTo { get; set; }
 
         public string NewspaperName
         {
@@ -48,10 +64,9 @@ namespace VitalConnection.AAL.Builder.ViewModel
             {
                 return new DelegateCommand<System.Windows.Window>((w) =>
                 {
-
                     try
                     {
-                        Issue.CreateIssue(Year, Number);
+                        Issue.CreateIssue(Year, Number, (byte)PageCount, (byte)ClassifiedFrom, (byte)ClassifiedTo);
                     }
                     catch 
                     {
