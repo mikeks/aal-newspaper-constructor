@@ -307,6 +307,7 @@
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Год газеты" Binding="{Binding NewspaperYear}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Номер газеты" Binding="{Binding NewspaperNumber}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Страница" Binding="{Binding PageNumber}" />
+								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Описание" Binding="{Binding AdDescription}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Цена" Binding="{Binding Price, StringFormat=N2}" />
 								<DataGridTextColumn IsReadOnly="True" Width="*" Header="Дата создания счета" Binding="{Binding Created}" />
 							</DataGrid.Columns>

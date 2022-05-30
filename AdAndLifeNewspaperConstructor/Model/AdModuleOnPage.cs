@@ -40,7 +40,7 @@ namespace VitalConnection.AAL.Builder.Model
 				{
 					case GridIdEnum.Main:
 					case GridIdEnum.Last:
-						if (AdModule.Width == 2 && AdModule.Height == 2) return "2x2";
+						if (AdModule.Width == 2 && AdModule.Height == 2) return "1/4";
 						if (AdModule.Width == 4 && AdModule.Height == 2) return "1/2";
 						if (AdModule.Width == 2 && AdModule.Height == 4) return "1/2";
 						if (AdModule.Width == 4 && AdModule.Height == 4) return "Full page";

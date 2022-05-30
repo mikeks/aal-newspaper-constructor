@@ -16,8 +16,8 @@ namespace VitalConnection.AAL.Builder.QuickBook
 		public int NewspaperYear { get; set; }
 		public DateTime NewspaperDate => new DateTime(NewspaperYear, 1, 1).Next(DayOfWeek.Wednesday).AddDays(7 * (NewspaperNumber - 1));
 		public string AdDescription { get; set; }
-		public string ItemName => $"Ad & Life #{NewspaperNumber}   {NewspaperDate:MMMM dd, yyyy}   {AdDescription}".Trim();
-		public string Description => ItemName;
+		public string ItemName => $"Ad & Life #{(NewspaperNumber > 9 ? "" : " ")}{NewspaperNumber}";
+		public string Description => $"Ad&Life #{NewspaperNumber}   {NewspaperDate:MMMM dd, yyyy}   {AdDescription}".Trim();
 		public decimal Price { get; set; }
 	}
 }

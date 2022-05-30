@@ -30,7 +30,7 @@ namespace VitalConnection.AAL.Builder.Model
 			Price = (decimal)rdr["Price"];
 			PageNumber = (int)rdr["PageNumber"];
 			Created = (DateTime)rdr["Created"];
-			AdDescription = (string)rdr["AdDescription"];
+			AdDescription = (string)ResolveDbNull(rdr["AdDescription"]);
 			//Exported = (DateTime)rdr["Exported"];
 		}
 
