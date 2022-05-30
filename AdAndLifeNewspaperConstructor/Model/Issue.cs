@@ -99,13 +99,15 @@ namespace VitalConnection.AAL.Builder.Model
             _pages = null;
         }
 
-        public static void CreateIssue(int year, int number)
+        public static void CreateIssue(int year, int number, byte pageCount, byte classifiedFrom, byte classifiedTo)
         {
             ExecStoredProc("CreateIssue", (cmd) =>
             {
                 cmd.Parameters.AddWithValue("@year", year);
                 cmd.Parameters.AddWithValue("@number", number);
-                //cmd.Parameters.AddWithValue("@pageCount", pageCount);
+                cmd.Parameters.AddWithValue("@pageCount", pageCount);
+                cmd.Parameters.AddWithValue("@classFrom", classifiedFrom);
+                cmd.Parameters.AddWithValue("@classTo", classifiedTo);
             });
         }
 

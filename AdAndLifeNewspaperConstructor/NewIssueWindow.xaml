@@ -5,13 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VitalConnection.AAL.Builder"
         mc:Ignorable="d"
-        Title="Новый выпуск газеты" Height="170" Width="260" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
+        Title="Новый выпуск газеты" Height="320" Width="260" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="ToolWindow">
 	<Grid Margin="5" >
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
 			<ColumnDefinition Width="50" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
+			<RowDefinition />
 			<RowDefinition />
 			<RowDefinition />
 			<RowDefinition />
@@ -22,18 +26,25 @@
 
         <TextBlock Text="{Binding NewspaperName}" TextWrapping="Wrap" Grid.ColumnSpan="2" />
 
-        <Label Grid.Row="1" Content="Номер" />
-        <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Top" Text="{Binding Number, Mode=TwoWay}" />
+		<Label Grid.Row="1" VerticalAlignment="Center" Content="Номер" />
+        <TextBox Grid.Row="1" VerticalAlignment="Center" Grid.Column="2" Text="{Binding Number, Mode=TwoWay}" />
 
-        <Label Grid.Row="2" Content="Год" />
-        <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Top" Text="{Binding Year, Mode=TwoWay}" />
+		<Label Grid.Row="2" VerticalAlignment="Center" Content="Год" />
+		<TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" Text="{Binding Year, Mode=TwoWay}" />
 
-        <!--<Label Grid.Row="3" Content="Количество страниц" />
-        <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Top" Text="{Binding PageCount, Mode=TwoWay}" />-->
+        <Label Grid.Row="3" VerticalAlignment="Center" Content="Количество страниц" />
+		<TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" Text="{Binding PageCount, Mode=TwoWay}" />
+
+		<Label Grid.Row="4" VerticalAlignment="Center" Content="Страницы объявлений" />
+
+		<Label Grid.Row="5" VerticalAlignment="Center" Content="От" Margin="20,0,0,0" />
+		<TextBox Grid.Row="5" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ClassifiedFrom, Mode=TwoWay}" />
+
+		<Label Grid.Row="6" VerticalAlignment="Center" Content="До" Margin="20,0,0,0" />
+		<TextBox Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" Text="{Binding ClassifiedTo, Mode=TwoWay}" />
 
 
-        
-        <StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+		<StackPanel Grid.Row="9" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Создать" Margin="0,0,10,0" Padding="10,0" Command="{Binding CreateIssueCommand}"  CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
             <Button Content="Отмена" Padding="10,0"  Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" />
 		</StackPanel>

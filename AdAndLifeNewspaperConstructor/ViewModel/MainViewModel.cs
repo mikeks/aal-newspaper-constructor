@@ -1219,7 +1219,14 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				if (excludeClassified && inv.CustomerName.StartsWith("CLASSIFIED")) continue;
 				if (inv.IsSelected) lst.Add(inv);
 			}
-			//var inv = Invoices.Where((x) => x.IsSelected);
+			lst.Sort((i1, i2) =>
+			{
+				var n = i1.CustomerName.CompareTo(i2.CustomerName);
+				if (n != 0) return n;
+				n = i1.NewspaperYear.CompareTo(i2.NewspaperYear);
+				if (n != 0) return n;
+				return i1.NewspaperNumber.CompareTo(i2.NewspaperNumber);
+			});
 			if (lst.Count == 0) MessageBox.Show("Счетов не выделено.", "Тут же пусто!", MessageBoxButton.OK, MessageBoxImage.Information);
 			return lst;
 		}
