@@ -12,7 +12,7 @@ namespace VitalConnection.AAL.Builder.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,16 +20,6 @@ namespace VitalConnection.AAL.Builder.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=localhost;Initial Catalog={DB};Integrated Security=True")]
-        public string CS {
-            get {
-                return ((string)(this["CS"]));
             }
         }
         
@@ -44,8 +34,31 @@ namespace VitalConnection.AAL.Builder.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Adobe\\Adobe InDesign CC 2017\\Scripts\\Scripts Panel\\Samples\\VBScr" +
+            "ipt\\aal_script.vbs")]
+        public string InDesignScriptFilename {
+            get {
+                return ((string)(this["InDesignScriptFilename"]));
+            }
+            set {
+                this["InDesignScriptFilename"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=localhost;Initial Catalog={DB};Integrated Security=True")]
+        public string CS {
+            get {
+                return ((string)(this["CS"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
+<ArrayOfString xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <string>Реклама и Жизнь - Филадельфия|AAL-Philadelphia</string>
   <string>Реклама и Жизнь - Балтимор|AAL-Baltimore</string>
 </ArrayOfString>")]
@@ -55,19 +68,6 @@ namespace VitalConnection.AAL.Builder.Properties {
             }
             set {
                 this["Databases"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\Adobe\\Adobe InDesign CC 2017\\Scripts\\Scripts Panel\\Samples\\VBScr" +
-            "ipt\\aal_script.vbs")]
-        public string InDesignScriptFilename {
-            get {
-                return ((string)(this["InDesignScriptFilename"]));
-            }
-            set {
-                this["InDesignScriptFilename"] = value;
             }
         }
     }

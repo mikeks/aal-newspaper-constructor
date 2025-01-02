@@ -2,9 +2,9 @@
 {
 
 
-    partial class AALDataSet
-    {
-    }
+	partial class AALDataSet
+	{
+	}
 }
 
 namespace VitalConnection.AAL.Builder.AALDataSetTableAdapters
