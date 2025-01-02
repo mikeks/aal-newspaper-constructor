@@ -793,6 +793,7 @@ namespace VitalConnection.AAL.Builder.ViewModel
 				ClassifiedView = CollectionViewSource.GetDefaultView(ClassifiedAd.All);
 				ClassifiedView.Filter = ClassifiedFilter;
 				RaisePropertyChangedEvent("ClassifiedView");
+				RaisePropertyChangedEvent("AllRubrics");
 			}
 			else
 			{

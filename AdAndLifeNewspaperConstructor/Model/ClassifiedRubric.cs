@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -35,7 +36,7 @@ namespace VitalConnection.AAL.Builder.Model
 
 		private static Dictionary<int, ClassifiedRubric> _all;
 
-		public static ClassifiedRubric GetById(int id)
+		private static void Refresh()
 		{
 			if (_all == null)
 			{
@@ -46,7 +47,11 @@ namespace VitalConnection.AAL.Builder.Model
 					_all.Add(a.Id, a);
 				}
 			}
+		}
 
+		public static ClassifiedRubric GetById(int id)
+		{
+			Refresh();
 			if (!_all.ContainsKey(id)) return null;
 			return _all[id];
 		}
@@ -61,6 +66,7 @@ namespace VitalConnection.AAL.Builder.Model
 		{
 			get
 			{
+				Refresh();
 				return _all.Values;
 			}
 		}

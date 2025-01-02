@@ -1,11 +1,7 @@
 ﻿using InDesign;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using VitalConnection.AAL.Builder.Model;
 using VitalConnection.AAL.Builder.Properties;
 
